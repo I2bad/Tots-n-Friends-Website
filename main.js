@@ -226,7 +226,7 @@ if (form) {
    Phase 2 (new page): wait until the page is ready, then the bands carry on up and off.
    Each phase starts or ends at rest, so waiting just holds a still, covered screen. */
 if (!reduce) {
-  const D = 700, STEP = 70; // ms per band, ms between bands
+  const D = 600, STEP = 55; // ms per band, ms between bands
   const HOLD = -50;         // vh: where the last band sits while the screen is covered
   const bands = [['--yellow', 8, 50], ['--red', 10, 46], ['--pink', 7, 54], ['--yellow', 9, 48], ['--red', 8, 52]]; // colour, edge sag (vh), arc peak x
   const pt = document.createElement('div');
@@ -242,7 +242,7 @@ if (!reduce) {
   const done = (anims) => Promise.all(anims.map((a) => a.finished));
   const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); };
 
-  // Arriving: sit covered, wait for fonts and images (but never more than 1.2s), then reveal
+  // Arriving: sit covered, wait only for fonts (never more than 300ms), then reveal
   let arrived = false;
   try { arrived = !!sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch {}
   if (arrived) {
@@ -250,11 +250,9 @@ if (!reduce) {
     const reveal = slide(HOLD, -200, 'cubic-bezier(.65,0,.35,1)');
     reveal.forEach((a) => a.pause());
     document.documentElement.classList.remove('pt-in');
-    const loaded = document.readyState === 'complete' ? 0 : new Promise((r) => addEventListener('load', r, { once: true }));
     const go = () => reveal.forEach((a) => a.play());
-    Promise.race([Promise.all([document.fonts.ready, loaded]), new Promise((r) => setTimeout(r, 1200))])
-      .then(() => requestAnimationFrame(() => requestAnimationFrame(go)));
-    setTimeout(go, 1800); // safety net: never leave the page covered
+    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 300))]).then(() => requestAnimationFrame(go));
+    setTimeout(go, 800); // safety net: never leave the page covered
     done(reveal).then(reset, () => {});
   }
 
