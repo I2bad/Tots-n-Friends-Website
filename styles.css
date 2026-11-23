@@ -359,6 +359,8 @@ em.accent { font-style: italic; font-variation-settings: "SOFT" 100, "WONK" 1; }
 }
 
 /* ---------- ticker ---------- */
+/* Keep the angled ticker full bleed without widening the page. */
+.home-main { overflow-x: clip; }
 .ticker {
   position: relative; z-index: 5; overflow: hidden;
   margin: -30px -3vw 0; padding: 18px 0; rotate: -1.6deg;
@@ -811,6 +813,31 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .faq details[open] summary .i { rotate: 45deg; }
 .faq details p { padding: 0 24px 24px; color: var(--ink-2); max-width: 70ch; }
 .faq details[open] p { animation: rise .5s var(--ease-out); }
+
+/* ---------- 404 ---------- */
+.lost { padding: clamp(130px, 16vw, 190px) 0 clamp(80px, 10vw, 130px); text-align: center; }
+.lost-inner { display: grid; justify-items: center; gap: 18px; }
+.lost-arch { position: relative; width: min(100%, 460px); margin-bottom: 8px; }
+.lost-arch svg { width: 100%; height: auto; overflow: visible; }
+.lost .band path { stroke-width: 13; }
+.lost .band:hover path { stroke-width: 17; }
+.lost-arch:has(.band:hover) .band:not(:hover) { opacity: .4; }
+.lost-num {
+  position: absolute; left: 50%; bottom: -4px; translate: -50% 0;
+  font: 600 clamp(3.2rem, 10vw, 5.2rem)/1 var(--font-display); font-style: italic;
+  font-variation-settings: "SOFT" 100, "WONK" 1; letter-spacing: -.04em;
+}
+.lost h1 { font-size: var(--step-5); letter-spacing: -.035em; }
+.lost .lede { max-width: 42ch; }
+.lost-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 10px; }
+.lost-sound {
+  margin-top: 14px; padding: 10px 16px; border: 0; border-radius: 4px; cursor: pointer;
+  background: #fffdf6; color: var(--ink-2); font: 600 1.25rem/1.1 var(--font-hand); rotate: -2deg;
+  box-shadow: 0 10px 18px -10px rgba(29, 25, 48, .4);
+  transition-property: rotate, scale; transition-duration: .4s; transition-timing-function: var(--ease-spring);
+}
+.lost-sound:hover { rotate: 0deg; scale: 1.04; }
+.lost-sound[aria-pressed="true"] { background: var(--yellow); color: var(--ink); }
 
 /* ---------- responsive ---------- */
 @media (max-width: 1080px) {
