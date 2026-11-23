@@ -222,37 +222,38 @@ if (form) {
 }
 
 /* Ribbon page transition, in two phases so a slow network never freezes it mid-motion.
-   Phase 1 (old page): the bands rise and settle, covering the screen. Then we navigate.
-   Phase 2 (new page): wait until the page is ready, then the bands carry on up and off.
-   Each phase starts or ends at rest, so waiting just holds a still, covered screen. */
+   Phase 1 (old page): five bands sweep up and cover the screen, then we navigate.
+   Phase 2 (new page): the bands lift off at once, the moment the page paints.
+   The page is prefetched on hover/click, so the covered screen is held for as short a time as possible. */
 if (!reduce) {
-  const D = 600, STEP = 55; // ms per band, ms between bands
-  const HOLD = -50;         // vh: where the last band sits while the screen is covered
+  const IN = 1100, STEP = 100; // cover: ms per band, ms between bands (slower = more ribbon to enjoy)
+  const OUT = 1000;            // reveal: ms. All bands lift together, so there is no dead time before it starts
+  const HOLD = -12;            // vh: where the bands rest once the screen is covered
   const bands = [['--yellow', 8, 50], ['--red', 10, 46], ['--pink', 7, 54], ['--yellow', 9, 48], ['--red', 8, 52]]; // colour, edge sag (vh), arc peak x
   const pt = document.createElement('div');
   pt.className = 'pt';
   pt.setAttribute('aria-hidden', 'true');
   pt.innerHTML = bands.map(([c, s, x]) =>
-    `<svg viewBox="0 0 100 200" preserveAspectRatio="none"><path fill="var(${c})" d="M0 0Q${x} ${s * 2} 100 0V200H0Z"/></svg>`).join('');
+    `<svg viewBox="0 0 100 116" preserveAspectRatio="none"><path fill="var(${c})" d="M0 0Q${x} ${s * 2} 100 0V116H0Z"/></svg>`).join('');
   document.body.append(pt);
 
-  const slide = (from, to, easing) => [...pt.children].map((el, i) => el.animate(
+  const slide = (from, to, easing, duration, stagger) => [...pt.children].map((el, i) => el.animate(
     [{ transform: `translateY(${from}vh)` }, { transform: `translateY(${to}vh)` }],
-    { duration: D, delay: i * STEP, easing, fill: 'both' }));
+    { duration, delay: i * stagger, easing, fill: 'both' }));
   const done = (anims) => Promise.all(anims.map((a) => a.finished));
   const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); };
 
-  // Arriving: sit covered, wait only for fonts (never more than 300ms), then reveal
+  // Arriving: sit covered for exactly one frame, then lift
   let arrived = false;
   try { arrived = !!sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch {}
   if (arrived) {
     pt.classList.add('on');
-    const reveal = slide(HOLD, -200, 'cubic-bezier(.65,0,.35,1)');
+    const reveal = slide(HOLD, -116, 'cubic-bezier(.4,0,.2,1)', OUT, 0);
     reveal.forEach((a) => a.pause());
     document.documentElement.classList.remove('pt-in');
     const go = () => reveal.forEach((a) => a.play());
-    Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 300))]).then(() => requestAnimationFrame(go));
-    setTimeout(go, 800); // safety net: never leave the page covered
+    requestAnimationFrame(go);
+    setTimeout(go, 400); // safety net: never leave the page covered
     done(reveal).then(reset, () => {});
   }
 
@@ -279,7 +280,7 @@ if (!reduce) {
     leaving = true;
     warm(a);
     pt.classList.add('on');
-    done(slide(100, HOLD, 'cubic-bezier(.45,0,.2,1)')).then(() => {
+    done(slide(100, HOLD, 'cubic-bezier(.45,0,.55,1)', IN, STEP)).then(() => {
       try { sessionStorage.setItem('pt', '1'); } catch {}
       location.href = a.href;
     });
