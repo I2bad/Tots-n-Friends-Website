@@ -221,10 +221,13 @@ if (form) {
   });
 }
 
-/* Ribbon page transition: five curved bands rise over the page, we navigate while it is covered,
-   then the bands keep rising on the new page. Same timeline, split across two page loads. */
+/* Ribbon page transition, in two phases so a slow network never freezes it mid-motion.
+   Phase 1 (old page): the bands rise and settle, covering the screen. Then we navigate.
+   Phase 2 (new page): wait until the page is ready, then the bands carry on up and off.
+   Each phase starts or ends at rest, so waiting just holds a still, covered screen. */
 if (!reduce) {
-  const D = 1150, STEP = 100, COVER = 4 * STEP + D / 2; // ms. Cover = last band half-way up.
+  const D = 700, STEP = 70; // ms per band, ms between bands
+  const HOLD = -50;         // vh: where the last band sits while the screen is covered
   const bands = [['--yellow', 8, 50], ['--red', 10, 46], ['--pink', 7, 54], ['--yellow', 9, 48], ['--red', 8, 52]]; // colour, edge sag (vh), arc peak x
   const pt = document.createElement('div');
   pt.className = 'pt';
@@ -233,36 +236,55 @@ if (!reduce) {
     `<svg viewBox="0 0 100 200" preserveAspectRatio="none"><path fill="var(${c})" d="M0 0Q${x} ${s * 2} 100 0V200H0Z"/></svg>`).join('');
   document.body.append(pt);
 
-  const play = (from) => {
-    pt.classList.add('on');
-    return [...pt.children].map((el, i) => {
-      const a = el.animate([{ transform: 'translateY(100vh)' }, { transform: 'translateY(-200vh)' }],
-        { duration: D, delay: i * STEP, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'both' });
-      a.currentTime = from;
-      return a;
-    });
-  };
+  const slide = (from, to, easing) => [...pt.children].map((el, i) => el.animate(
+    [{ transform: `translateY(${from}vh)` }, { transform: `translateY(${to}vh)` }],
+    { duration: D, delay: i * STEP, easing, fill: 'both' }));
+  const done = (anims) => Promise.all(anims.map((a) => a.finished));
   const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); };
 
+  // Arriving: sit covered, wait for fonts and images (but never more than 1.2s), then reveal
   let arrived = false;
   try { arrived = !!sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch {}
   if (arrived) {
-    const last = play(COVER).at(-1);
+    pt.classList.add('on');
+    const reveal = slide(HOLD, -200, 'cubic-bezier(.65,0,.35,1)');
+    reveal.forEach((a) => a.pause());
     document.documentElement.classList.remove('pt-in');
-    last.finished.then(reset, () => {});
+    const loaded = document.readyState === 'complete' ? 0 : new Promise((r) => addEventListener('load', r, { once: true }));
+    const go = () => reveal.forEach((a) => a.play());
+    Promise.race([Promise.all([document.fonts.ready, loaded]), new Promise((r) => setTimeout(r, 1200))])
+      .then(() => requestAnimationFrame(() => requestAnimationFrame(go)));
+    setTimeout(go, 1800); // safety net: never leave the page covered
+    done(reveal).then(reset, () => {});
+  }
+
+  // Warm the next page early: on hover/touch, and again the moment the click starts the cover
+  const warmed = new Set();
+  const warm = (a) => {
+    if (warmed.has(a.href)) return;
+    warmed.add(a.href);
+    const l = document.createElement('link');
+    l.rel = 'prefetch'; l.href = a.href;
+    document.head.append(l);
+  };
+  const internal = (a) => a && a.origin === location.origin && !a.target && !a.hasAttribute('download') &&
+    !(a.pathname === location.pathname && a.search === location.search);
+  for (const ev of ['pointerenter', 'touchstart', 'focusin']) {
+    document.addEventListener(ev, (e) => { const a = e.target.closest?.('a[href]'); if (internal(a)) warm(a); }, { capture: true, passive: true });
   }
 
   let leaving = false;
   addEventListener('click', (e) => {
     const a = e.target.closest?.('a[href]');
-    if (!a || leaving || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ||
-        a.target || a.hasAttribute('download') || a.origin !== location.origin ||
-        (a.pathname === location.pathname && a.search === location.search)) return;
+    if (!internal(a) || leaving || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     leaving = true;
-    play(0);
-    try { sessionStorage.setItem('pt', '1'); } catch {}
-    setTimeout(() => { location.href = a.href; }, COVER);
+    warm(a);
+    pt.classList.add('on');
+    done(slide(100, HOLD, 'cubic-bezier(.45,0,.2,1)')).then(() => {
+      try { sessionStorage.setItem('pt', '1'); } catch {}
+      location.href = a.href;
+    });
   });
   // Back/forward cache restores the page mid-cover: clear it
   addEventListener('pageshow', (e) => {
