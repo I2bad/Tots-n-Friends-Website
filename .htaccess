@@ -1,0 +1,23 @@
+DirectoryIndex index.html
+
+RewriteEngine On
+
+# Redirect direct requests for source files, without redirecting internal rewrites.
+RewriteCond %{THE_REQUEST} "\s/+index\.html[?\s]"
+RewriteRule ^index\.html$ / [R=301,L]
+
+RewriteCond %{THE_REQUEST} "\s/+story\.html[?\s]"
+RewriteRule ^story\.html$ /timeline [R=301,L]
+
+RewriteCond %{THE_REQUEST} "\s/+parents\.html[?\s]"
+RewriteRule ^parents\.html$ /philosophy [R=301,L]
+
+RewriteCond %{THE_REQUEST} "\s/+contact\.html[?\s]"
+RewriteRule ^contact\.html$ /contact [R=301,L]
+
+RewriteRule ^(timeline|philosophy|contact)/$ /$1 [R=301,L]
+
+# Keep the URLs already published by the live site.
+RewriteRule ^timeline$ story.html [L]
+RewriteRule ^philosophy$ parents.html [L]
+RewriteRule ^contact$ contact.html [L]
