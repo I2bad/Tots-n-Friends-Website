@@ -1071,14 +1071,15 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .q { margin: 0; padding: 0; border: 0; min-width: 0; display: grid; gap: 12px; }
 .q legend { padding: 0; margin-bottom: 12px; font-weight: 700; line-height: 1.4; }
 .opts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-.opts label { position: relative; display: block; }
+.opts label { position: relative; display: block; cursor: pointer; }
 .opts input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .opts span {
   display: flex; align-items: center; justify-content: center; min-height: 56px; padding: .5em .7em; text-align: center;
   border-radius: 16px; border: 2px solid var(--line); background: var(--paper); font-weight: 700; font-size: .92rem; line-height: 1.2;
+  pointer-events: none; /* the hidden radio takes every hover and click, so the lifted pill cannot steal them */
   transition: background-color .2s, color .2s, border-color .2s, box-shadow .3s var(--ease-out), translate .3s var(--ease-spring);
 }
-@media (hover: hover) { .opts input:not(:checked):hover + span { border-color: var(--ink-3); translate: 0 -2px; } }
+@media (hover: hover) { .opts label:hover input:not(:checked) + span { border-color: var(--ink-3); translate: 0 -2px; } }
 .opts input:checked + span { background: var(--ink); color: #fff; border-color: var(--ink); box-shadow: 3px 3px 0 var(--c); }
 .opts input:focus-visible + span { outline: 3px solid var(--blue); outline-offset: 3px; }
 .check-nav { display: flex; justify-content: space-between; gap: 12px; }
