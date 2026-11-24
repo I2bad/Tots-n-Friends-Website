@@ -37,11 +37,16 @@
 
   --step--1: clamp(.84rem, .8rem + .15vw, .94rem);
   --step-0: clamp(1rem, .96rem + .2vw, 1.12rem);
-  --step-1: clamp(1.18rem, 1.08rem + .5vw, 1.5rem);
-  --step-2: clamp(1.45rem, 1.25rem + 1vw, 2.1rem);
-  --step-3: clamp(1.9rem, 1.5rem + 2vw, 3.1rem);
-  --step-4: clamp(2.4rem, 1.7rem + 3.4vw, 4.4rem);
+  --step-1: clamp(1.1rem, 1.04rem + .3vw, 1.3rem);
+  --step-2: clamp(1.3rem, 1.15rem + .7vw, 1.75rem);
+  --step-3: clamp(1.6rem, 1.3rem + 1.4vw, 2.4rem);
+  --step-4: clamp(2rem, 1.5rem + 2.4vw, 3.3rem);
   --step-5: clamp(2.8rem, 1.8rem + 4.8vw, 5.8rem);
+
+  /* spacing: use only these three for layout rhythm */
+  --space-section: clamp(72px, 9vw, 120px); /* between sections */
+  --space-head: clamp(32px, 4vw, 56px);     /* section title block to its content */
+  --space-gap: clamp(20px, 2.5vw, 32px);    /* between cards in a grid */
 
   --wrap: 1240px;
   --gutter: clamp(16px, 4vw, 40px);
@@ -94,12 +99,12 @@ button { font: inherit; color: inherit; }
 .wrap { width: min(100% - 2 * var(--gutter), var(--wrap)); margin-inline: auto; }
 .i { width: 1.25em; height: 1.25em; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-.lede { font-size: var(--step-1); line-height: 1.55; color: var(--ink-2); }
-.section { padding-block: clamp(80px, 11vw, 150px); }
-.section-head { display: grid; gap: 18px; max-width: 760px; margin-bottom: clamp(40px, 6vw, 76px); }
+.lede { font-size: var(--step-1); line-height: 1.55; color: var(--ink-2); max-width: 56ch; }
+.section { padding-block: var(--space-section); }
+.section-head { display: grid; gap: 18px; max-width: 760px; margin-bottom: var(--space-head); }
 .section-head h2 { font-size: var(--step-4); }
 .section-head.center { margin-inline: auto; text-align: center; justify-items: center; }
-.section-head-row { display: flex; align-items: end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(40px, 6vw, 64px); }
+.section-head-row { display: flex; align-items: end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: var(--space-head); }
 .section-head-row .section-head { margin-bottom: 0; }
 em.accent { font-style: italic; font-variation-settings: "SOFT" 100, "WONK" 1; }
 
@@ -418,9 +423,10 @@ html:has(#menu:popover-open) { overflow: hidden; }
 .ticker {
   position: relative; z-index: 5; overflow: hidden;
   margin: -30px -3vw 0; padding: 18px 0; rotate: -1.6deg;
-  background: var(--ink); color: var(--cream);
-  box-shadow: 0 14px 30px -16px rgba(29, 25, 48, .6);
+  background: var(--yellow); color: var(--ink);
+  box-shadow: 0 14px 30px -16px rgba(120, 84, 0, .45);
 }
+.ticker + .island { margin-top: clamp(48px, 6vw, 88px); }
 .ticker-track { display: flex; width: max-content; animation: marquee 40s linear infinite; }
 .ticker:hover .ticker-track { animation-play-state: paused; }
 .ticker ul { display: flex; list-style: none; padding: 0; }
@@ -428,7 +434,7 @@ html:has(#menu:popover-open) { overflow: hidden; }
   display: flex; align-items: center; gap: 30px; padding-right: 30px; white-space: nowrap;
   font: 500 var(--step-1)/1 var(--font-display); font-variation-settings: "SOFT" 100;
 }
-.ticker li svg { width: 20px; height: 20px; color: var(--c); }
+.ticker li svg { width: 18px; height: 18px; color: var(--ink); }
 @keyframes marquee { to { translate: -50% 0; } }
 
 /* ---------- reveal on scroll ---------- */
@@ -436,11 +442,11 @@ html.js [data-reveal] { opacity: 0; translate: 0 30px; transition: opacity .9s v
 html.js [data-reveal].in { opacity: 1; translate: 0 0; }
 
 /* ---------- purpose / pillars ---------- */
-.purpose-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 6vw, 96px); align-items: start; }
+.purpose-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
 .purpose-head { position: sticky; top: 120px; display: grid; gap: 22px; justify-items: start; }
 .purpose-head h2 { font-size: var(--step-4); }
 .pillars { list-style: none; padding: 0; display: grid; }
-.pillar { display: grid; grid-template-columns: clamp(72px, 9vw, 128px) 1fr; gap: 20px; padding-block: clamp(28px, 4vw, 44px); border-top: 1px solid var(--line); }
+.pillar { display: grid; grid-template-columns: clamp(72px, 9vw, 128px) 1fr; gap: 20px; padding-block: clamp(22px, 3vw, 34px); border-top: 1px solid var(--line); }
 .pillar:last-child { border-bottom: 1px solid var(--line); }
 .pillar-mark { /* double-ring arch in the pillar colour */
   width: clamp(72px, 8vw, 104px); aspect-ratio: 2 / 1; margin-top: 4px;
@@ -449,7 +455,7 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; }
 .pillar-tag { font: 700 var(--step--1)/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--c); margin-bottom: 12px; }
 .pillar h3 { font-size: var(--step-2); margin-bottom: 14px; }
 .pillar p:last-child { color: var(--ink-2); }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: clamp(56px, 8vw, 110px); }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: var(--space-head); }
 .stat { padding: 26px 24px; border-radius: 24px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); display: grid; gap: 8px; align-content: start; }
 .stat strong { font: 600 var(--step-3)/1 var(--font-display); font-variation-settings: "SOFT" 100; color: var(--c); letter-spacing: -.03em; }
 .stat span { color: var(--ink-2); font-size: var(--step--1); line-height: 1.5; }
@@ -457,12 +463,11 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; }
 /* ---------- beliefs: a classroom pin-board ----------
    Each belief is a different kind of paper, pinned or taped,
    and carries proof from a real teacher, parent or event. */
-.beliefs { padding-top: 0; }
 .wall {
   list-style: none; margin: 0;
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start;
-  gap: clamp(36px, 4vw, 56px) clamp(22px, 3vw, 44px);
-  padding: clamp(44px, 5vw, 76px) clamp(22px, 4vw, 60px) clamp(52px, 6vw, 92px);
+  gap: clamp(30px, 3vw, 44px) clamp(18px, 2.5vw, 34px);
+  padding: clamp(36px, 4vw, 56px) clamp(18px, 3vw, 44px) clamp(40px, 4.5vw, 64px);
   border-radius: clamp(22px, 4vw, 40px);
   background:
     var(--grain),
@@ -472,8 +477,8 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; }
 }
 .note {
   --r: 0deg;
-  position: relative; display: grid; gap: 12px;
-  padding: 34px 26px 26px;
+  position: relative; display: grid; gap: 14px;
+  padding: 34px 28px 28px;
   background: var(--sheet, #fffdf6);
   rotate: var(--r);
   box-shadow: 0 1px 1px rgba(60, 40, 10, .14), 0 16px 24px -14px rgba(60, 40, 10, .55);
@@ -619,13 +624,14 @@ html.js .note.in {
 .round-btn:active { scale: .92; }
 .team-track {
   --edge: max(var(--gutter), (100vw - var(--wrap)) / 2);
-  display: grid; grid-auto-flow: column; grid-auto-columns: clamp(250px, 26vw, 310px); gap: 22px;
+  display: grid; grid-auto-flow: column; grid-auto-columns: clamp(220px, 22vw, 270px); gap: 22px;
   list-style: none; margin: 0; padding: 12px var(--edge) 28px;
   overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge);
   scrollbar-width: none;
 }
 .team-track::-webkit-scrollbar { display: none; }
-.member { scroll-snap-align: start; display: grid; gap: 16px; align-content: start; }
+.member { scroll-snap-align: start; display: grid; gap: 14px; align-content: start; }
+.member .member-photo { margin-bottom: 4px; }
 .member-photo { aspect-ratio: 4 / 5; overflow: hidden; background: color-mix(in srgb, var(--c) 30%, var(--paper)); }
 /* Crop the narrow dark strip at the edge of the source portraits. */
 .member-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 6%; scale: 1.025; transition: scale .7s var(--ease-out); }
@@ -636,15 +642,15 @@ html.js .note.in {
 
 /* ---------- testimonials ---------- */
 .voices { background: color-mix(in srgb, var(--yellow) 20%, var(--paper)); position: relative; }
-.quote-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
-.quote-grid > :nth-child(2) { margin-top: 56px; }
+.quote-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-gap); align-items: start; }
+.quote-grid > :nth-child(2) { margin-top: 40px; }
 .quote {
-  position: relative; display: grid; gap: 22px; padding: clamp(28px, 3vw, 40px);
+  position: relative; display: grid; gap: 24px; padding: clamp(28px, 3vw, 40px) clamp(26px, 3vw, 38px);
   border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow);
 }
 .quote::before {
   content: "\201C"; position: absolute; top: -.18em; right: 20px;
-  font: 600 7rem/1 var(--font-display); color: var(--c);
+  font: 600 5.5rem/1 var(--font-display); color: var(--c);
 }
 .quote blockquote { font: 400 var(--step-1)/1.5 var(--font-display); font-variation-settings: "SOFT" 100; color: var(--ink); }
 .quote figcaption { display: flex; align-items: center; gap: 14px; }
@@ -653,11 +659,11 @@ html.js .note.in {
 .quote figcaption > span:last-child span { font-size: var(--step--1); color: var(--ink-3); }
 
 /* ---------- CTA band ---------- */
-.cta { padding-block: clamp(80px, 10vw, 140px); }
+.cta { padding-block: var(--space-section); }
 .cta-card {
   position: relative; overflow: hidden; isolation: isolate;
   display: grid; gap: 24px; justify-items: start;
-  padding: clamp(36px, 6vw, 88px); border-radius: clamp(28px, 5vw, 56px);
+  padding: clamp(28px, 4.5vw, 64px); border-radius: clamp(28px, 5vw, 56px);
   background: var(--ink); color: var(--cream);
 }
 .cta-card h2 { font-size: var(--step-4); max-width: 14ch; }
@@ -707,7 +713,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .page-hero { position: relative; overflow: hidden; padding: clamp(130px, 15vw, 190px) 0 clamp(56px, 7vw, 96px); }
 .page-hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 72px); align-items: end; }
 .page-hero h1 { font-size: var(--step-5); margin: 20px 0 24px; letter-spacing: -.035em; }
-.page-hero .lede { max-width: 40ch; }
+.page-hero .lede { max-width: 40ch; font-size: clamp(1.18rem, 1.08rem + .5vw, 1.5rem); }
 .page-hero > .wrap > * { animation: rise 1s var(--ease-out) backwards; }
 
 /* rainbow gauge (For Parents, Our Story) */
@@ -726,12 +732,12 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .form-intro { color: var(--ink-2); margin-bottom: 28px; }
 
 /* ---------- myths ---------- */
-.myths { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 22px; }
+.myths { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: var(--space-gap); }
 .flip { perspective: 1600px; }
 .flip-inner { display: grid; height: 100%; transform-style: preserve-3d; transition: transform .85s var(--ease-out); }
 .flip.is-flipped .flip-inner { transform: rotateY(180deg); }
 .face {
-  grid-area: 1 / 1; display: flex; flex-direction: column; gap: 18px; min-height: 360px;
+  grid-area: 1 / 1; display: flex; flex-direction: column; gap: 16px; min-height: 300px;
   padding: clamp(26px, 3vw, 36px); border-radius: var(--radius);
   -webkit-backface-visibility: hidden; backface-visibility: hidden;
 }
@@ -751,10 +757,10 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 }
 
 /* research stats */
-.research-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.research-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-gap); }
 .research { display: grid; gap: 12px; align-content: start; padding: 30px 26px; border-radius: 24px; background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
 .research strong, .gauge-num strong { font-variant-numeric: tabular-nums; }
-.research strong { font: 600 clamp(2.8rem, 5vw, 4.2rem)/1 var(--font-display); font-variation-settings: "SOFT" 100, "WONK" 1; color: var(--c-l); letter-spacing: -.03em; }
+.research strong { font: 600 clamp(2.3rem, 4vw, 3.3rem)/1 var(--font-display); font-variation-settings: "SOFT" 100, "WONK" 1; color: var(--c-l); letter-spacing: -.03em; }
 .research h3 { font: 700 var(--step-0)/1.35 var(--font-body); letter-spacing: 0; }
 .research p { color: var(--cream-2); font-size: var(--step--1); }
 .research .src { font-size: .78rem; color: rgba(246, 241, 231, .55); }
@@ -771,7 +777,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
   background: linear-gradient(var(--red), var(--orange), var(--yellow), var(--green), var(--blue), var(--purple));
   clip-path: inset(0 0 calc((1 - var(--p, 0)) * 100%) 0 round 6px);
 }
-.tl-list { list-style: none; padding: 0; display: grid; gap: clamp(56px, 9vw, 130px); }
+.tl-list { list-style: none; padding: 0; display: grid; gap: clamp(40px, 6vw, 88px); }
 .tl-item { display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr); align-items: center; }
 .tl-dot {
   grid-column: 2; grid-row: 1; justify-self: center; position: relative; z-index: 1;
@@ -782,7 +788,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .tl-item.in .tl-dot { box-shadow: inset 0 0 0 7px var(--c), 0 0 0 9px color-mix(in srgb, var(--c) 22%, transparent); scale: 1.15; }
 .tl-year {
   grid-column: 3; grid-row: 1; padding-inline: 12px;
-  font: 500 clamp(3.6rem, 9vw, 7.6rem)/.85 var(--font-display); font-style: italic;
+  font: 500 clamp(3rem, 7vw, 5.6rem)/.85 var(--font-display); font-style: italic;
   font-variation-settings: "SOFT" 100, "WONK" 1; letter-spacing: -.05em; color: var(--c-d);
 }
 .tl-card { grid-column: 1; grid-row: 1; display: grid; gap: 14px; padding: clamp(26px, 3vw, 38px); border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow); }
@@ -853,17 +859,17 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .form-done .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
 .map { margin-top: clamp(56px, 8vw, 96px); overflow: hidden; border-radius: clamp(60px, 12vw, 220px) clamp(60px, 12vw, 220px) 28px 28px; box-shadow: var(--shadow); background: var(--paper-2); }
 .map iframe { display: block; width: 100%; height: clamp(320px, 42vw, 480px); border: 0; }
-.faq { display: grid; gap: 12px; max-width: 880px; margin-inline: auto; }
+.faq { display: grid; gap: 14px; max-width: 880px; margin-inline: auto; }
 .faq details { border-radius: 22px; background: var(--card); box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .3s; }
 .faq details[open] { box-shadow: inset 0 0 0 2px var(--c); }
 .faq summary {
-  display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 24px; cursor: pointer; list-style: none;
-  font: 600 var(--step-1)/1.3 var(--font-display); font-variation-settings: "SOFT" 100;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 26px; cursor: pointer; list-style: none;
+  font: 600 clamp(1.05rem, 1rem + .25vw, 1.2rem)/1.3 var(--font-display); font-variation-settings: "SOFT" 100;
 }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary .i { color: var(--c-d); transition: rotate .35s var(--ease-spring); }
 .faq details[open] summary .i { rotate: 45deg; }
-.faq details p { padding: 0 24px 24px; color: var(--ink-2); max-width: 70ch; }
+.faq details p { padding: 0 26px 24px; color: var(--ink-2); max-width: 70ch; }
 .faq details[open] p { animation: rise .5s var(--ease-out); }
 
 /* ---------- quick facts, steps, quick answers ---------- */
@@ -878,7 +884,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .faq-more { display: flex; justify-content: center; margin-top: 28px; }
 .steps {
   list-style: none; padding: 0; margin: 8px 0 0; width: 100%; counter-reset: step;
-  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-gap);
 }
 .steps li {
   counter-increment: step; display: grid; gap: 6px; align-content: start; padding: 22px 22px 24px; border-radius: 22px;
