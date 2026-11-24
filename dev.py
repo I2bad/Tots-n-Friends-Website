@@ -2,7 +2,7 @@
 # Knows the same clean links as the live site (see vercel.json).
 import http.server, os
 ROOT = os.path.dirname(os.path.abspath(__file__))
-ROUTES = {"/contact": "/contact.html", "/philosophy": "/parents.html", "/timeline": "/story.html"}
+ROUTES = {"/contact": "/contact.html", "/philosophy": "/parents.html", "/timeline": "/story.html", "/progress": "/progress.html"}
 
 class H(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *a, **k): super().__init__(*a, directory=ROOT, **k)

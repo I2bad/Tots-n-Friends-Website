@@ -21,6 +21,11 @@
       "source": "/contact.html",
       "destination": "/contact",
       "permanent": true
+    },
+    {
+      "source": "/progress.html",
+      "destination": "/progress",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -35,6 +40,10 @@
     {
       "source": "/contact",
       "destination": "/contact.html"
+    },
+    {
+      "source": "/progress",
+      "destination": "/progress.html"
     }
   ],
   "headers": [

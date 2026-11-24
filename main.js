@@ -260,6 +260,61 @@ function init(root) {
     });
   }
 
+  /* Progress check: one area per screen, scores stay in the browser */
+  const chk = root.querySelector('[data-check]');
+  if (chk) {
+    const steps = [...chk.querySelectorAll('.step')];
+    const dots = [...chk.querySelectorAll('.dots li')];
+    const [prev, next] = [chk.querySelector('[data-prev]'), chk.querySelector('[data-next]')];
+    const out = root.querySelector('[data-result]');
+    const LEVEL = [ // 5-6 of 6 points, 3-4, 0-2
+      { name: 'Growing well', icon: '#i-check', msg: 'Your child is doing well here. Keep doing what you already do.' },
+      { name: 'Worth watching', icon: '#i-clock', msg: 'Every child has areas that take a little longer. Try the idea below for three or four weeks, then tell your child’s teacher what you notice.' },
+      { name: 'Let’s talk', icon: '#i-wa', msg: 'Please talk to your child’s teacher. We can show you what we see in class and plan next steps together.' },
+    ];
+    let at = 0;
+    const answered = () => steps[at].querySelectorAll('.q input:checked').length === steps[at].querySelectorAll('.q').length;
+    const show = (n) => {
+      at = n;
+      steps.forEach((s, i) => { s.hidden = i !== n; });
+      dots.forEach((d, i) => { d.className = i <= n ? 'on' : ''; });
+      chk.querySelector('[data-stepcount]').textContent = `Area ${n + 1} of ${steps.length} · ${steps[n].dataset.name}`;
+      prev.disabled = n === 0;
+      next.textContent = n === steps.length - 1 ? 'See my child’s picture' : 'Next';
+      next.disabled = !answered();
+    };
+    chk.addEventListener('change', () => { next.disabled = !answered(); sfx.tick(); });
+    prev.addEventListener('click', () => show(at - 1));
+    next.addEventListener('click', () => {
+      if (at < steps.length - 1) return show(at + 1);
+      const pts = steps.map((s) => [...s.querySelectorAll('.q input:checked')].reduce((t, i) => t + Number(i.value), 0));
+      const lv = pts.map((p) => (p >= 5 ? 0 : p >= 3 ? 1 : 2));
+      out.querySelectorAll('.fill path').forEach((p, i) => p.style.setProperty('--to', 1 - pts[i] / 6));
+      out.querySelectorAll('[data-card]').forEach((li, i) => {
+        li.dataset.level = lv[i];
+        li.querySelector('use').setAttribute('href', LEVEL[lv[i]].icon);
+        li.querySelector('.status span').textContent = LEVEL[lv[i]].name;
+        li.querySelector('.msg').textContent = LEVEL[lv[i]].msg;
+        li.querySelector('.tip span').textContent = steps[i].dataset.tip;
+      });
+      out.querySelector('[data-flag]').hidden = lv.filter((l) => l === 2).length < 2;
+      chk.hidden = true;
+      out.hidden = false;
+      sfx.chime();
+      const h = out.querySelector('h2');
+      h.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+      h.focus({ preventScroll: true });
+    });
+    out.querySelector('[data-redo]').addEventListener('click', () => {
+      chk.reset();
+      out.hidden = true;
+      chk.hidden = false;
+      show(0);
+      chk.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    show(0);
+  }
+
   onScroll();
 }
 init(document);
