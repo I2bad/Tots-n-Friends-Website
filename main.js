@@ -52,7 +52,6 @@ function setSound(on) {
   toggles().forEach((b) => b.setAttribute('aria-pressed', on));
   try { localStorage.setItem('tnf-sound', on ? 'on' : 'off'); } catch {}
 }
-requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('snd-ready')));
 
 addEventListener('click', (e) => {
   const el = e.target.closest?.('.btn, .round-btn, .menu-btn, .prog-tab, .flip-btn, .nav-links a, .menu-links a, summary');
@@ -66,9 +65,6 @@ addEventListener('click', (e) => {
 const header = document.querySelector('.site-header');
 let hero = null;
 let tl = null;
-let milestones = [];
-let currentMilestone = null;
-const smallTimeline = matchMedia('(max-width: 900px)');
 let queued = false;
 function onScroll() {
   if (queued) return;
@@ -82,21 +78,7 @@ function onScroll() {
     }
     if (tl) {
       const r = tl.getBoundingClientRect();
-      const readingPoint = innerHeight * 0.6 - r.top;
-      let next = null;
-      if (smallTimeline.matches && readingPoint >= 0 && readingPoint < r.height) {
-        // Keep the current story active through the gap until the next year reaches the reading line.
-        for (const milestone of milestones) {
-          if (milestone.offsetTop > readingPoint) break;
-          next = milestone;
-        }
-      }
-      tl.style.setProperty('--p', clamp01(readingPoint / r.height).toFixed(3));
-      if (next !== currentMilestone) {
-        currentMilestone?.classList.remove('is-current');
-        next?.classList.add('is-current');
-        currentMilestone = next;
-      }
+      tl.style.setProperty('--p', clamp01((innerHeight * 0.6 - r.top) / r.height).toFixed(3));
     }
   });
 }
@@ -128,9 +110,41 @@ const io = new IntersectionObserver((entries) => {
   }
 }, { rootMargin: '0px 0px -12% 0px' });
 
-/* Mobile menu (native popover): close after picking a link. Header never gets swapped, so this runs once. */
+/* The full-screen popover keeps keyboard and screen-reader focus inside the mobile menu. */
 const menu = document.getElementById('menu');
-menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.hidePopover?.()));
+if (menu) {
+  const controls = [...menu.querySelectorAll('button, a[href]')];
+  const mobileNav = matchMedia('(max-width: 920px)');
+  let locked = [];
+  menu.addEventListener('toggle', () => {
+    if (!menu.matches(':popover-open')) return;
+    locked = [...document.body.children].filter((el) => el !== menu && !el.inert &&
+      el.matches('.skip, .site-header, main, .site-footer, .wa-float'));
+    locked.forEach((el) => { el.inert = true; });
+  });
+  menu.addEventListener('beforetoggle', ({ newState }) => {
+    if (newState !== 'closed') return;
+    locked.forEach((el) => { el.inert = false; });
+    locked = [];
+  });
+  menu.addEventListener('keydown', (event) => {
+    if (event.key !== 'Tab') return;
+    const first = controls[0], last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', (event) => {
+    if (!(event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)) menu.hidePopover();
+  }));
+  mobileNav.addEventListener('change', ({ matches }) => {
+    if (!matches && menu.matches(':popover-open')) menu.hidePopover();
+  });
+}
 
 /* Everything that lives inside a page. Runs on first load for the whole document,
    and again for the new <main> each time the page transition swaps one in. */
@@ -152,8 +166,6 @@ function init(root) {
 
   hero = root.querySelector('.hero');
   tl = root.querySelector('.tl');
-  milestones = tl ? [...tl.querySelectorAll('.tl-item')] : [];
-  currentMilestone = null;
   /* Hero depth: layers drift with the pointer (mouse/trackpad only) */
   if (hero && !reduce && matchMedia('(pointer: fine)').matches) {
     const h = hero;
@@ -267,6 +279,7 @@ if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
   pt.className = 'pt';
   pt.setAttribute('aria-hidden', 'true');
   pt.innerHTML = colours.map((c) => `<svg viewBox="0 0 100 ${H}" preserveAspectRatio="none"><path fill="var(${c})"/></svg>`).join('');
+  pt.popover = 'manual'; // top layer: stays above an open or closing menu
   document.body.append(pt);
   const kids = [...pt.children];
 
@@ -292,7 +305,7 @@ if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
   const lift = () => Promise.all(kids.map((el, i) => sway(el, HOLD, -(H + 14), [look[i].s[2], rand(-2, 2), rand(-2, 2)], look[i].ease, OUT * rand(0.95, 1.1), (kids.length - 1 - i) * 16)));
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const frames = (n) => new Promise((r) => { const f = () => (n-- > 0 ? requestAnimationFrame(f) : r()); f(); });
-  const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); };
+  const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); try { pt.hidePopover(); } catch {} };
 
   // Fetch pages once per session; hovering a link warms the cache
   const pages = new Map();
@@ -347,6 +360,7 @@ if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
     const hash = new URL(href, location.href).hash;
     roll();
     pt.classList.add('on');
+    try { pt.showPopover(); } catch {}
     const page = load(href);
     const images = page.then(({ html }) => preload(new DOMParser().parseFromString(html, 'text/html'))).catch(() => {}); // starts as soon as the HTML lands
     try {

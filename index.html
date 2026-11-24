@@ -105,22 +105,23 @@
     <div class="nav-end">
       <button class="sound-btn" type="button" data-sound aria-pressed="false" aria-label="Sound effects"><svg class="i on"><use href="#i-sound-on"/></svg><svg class="i off"><use href="#i-sound-off"/></svg><span aria-hidden="true">Sound</span></button>
       <a class="btn btn-primary btn-sm nav-cta" href="/contact">Get in touch</a>
-      <button class="menu-btn" popovertarget="menu" aria-label="Open menu"><svg class="i"><use href="#i-menu"/></svg></button>
+      <button class="menu-btn" popovertarget="menu" aria-label="Open menu"><svg class="i bars" viewBox="0 0 24 24" aria-hidden="true"><path class="b1" d="M4 7h16"/><path class="b2" d="M4 12h16"/><path class="b3" d="M4 17h16" pathLength="1"/></svg></button>
     </div>
   </div>
 </header>
 
-<div id="menu" popover>
+<div id="menu" popover role="dialog" aria-modal="true" aria-label="Mobile menu">
+  <div class="menu-wipe" aria-hidden="true"><i></i></div>
   <div class="menu-top">
     <img src="images/logo.webp" alt="" width="240" height="150">
-    <button class="menu-btn" style="display:grid" popovertarget="menu" popovertargetaction="hide" aria-label="Close menu"><svg class="i"><use href="#i-close"/></svg></button>
+    <button class="menu-btn menu-close" type="button" autofocus popovertarget="menu" popovertargetaction="hide" aria-label="Close menu"><svg class="i bars" viewBox="0 0 24 24" aria-hidden="true"><path class="b1" d="M4 7h16"/><path class="b2" d="M4 12h16"/><path class="b3" d="M4 17h16" pathLength="1"/></svg></button>
   </div>
   <nav aria-label="Mobile">
     <ol class="menu-links">
-      <li><a href="/" style="--c:var(--red-d)"><span class="mark" aria-hidden="true"></span>Home</a></li>
-      <li><a href="/philosophy" style="--c:var(--orange-d)"><span class="mark" aria-hidden="true"></span>For Parents</a></li>
-      <li><a href="/timeline" style="--c:var(--green-d)"><span class="mark" aria-hidden="true"></span>Our Story</a></li>
-      <li><a href="/contact" style="--c:var(--blue-d)"><span class="mark" aria-hidden="true"></span>Contact</a></li>
+      <li><a href="/" style="--c:var(--red-d)" aria-current="page"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Home</span></span></a></li>
+      <li><a href="/philosophy" style="--c:var(--orange-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>For Parents</span></span></a></li>
+      <li><a href="/timeline" style="--c:var(--green-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Our Story</span></span></a></li>
+      <li><a href="/contact" style="--c:var(--blue-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Contact</span></span></a></li>
     </ol>
   </nav>
   <div class="menu-foot">
@@ -213,8 +214,6 @@
       </div>
 
       </div>
-
-      <button class="sound-hint" type="button" data-sound aria-pressed="false"><span class="off">♪ Psst! Turn on sound, then play the rainbow.</span><span class="on">♪ Sound on! Now play the rainbow.</span></button>
 
       <div class="hero-copy">
         <h1 class="hero-title" id="hero-title">
