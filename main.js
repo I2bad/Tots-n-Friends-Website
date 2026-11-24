@@ -46,27 +46,14 @@ const sfx = {
   chime: () => [0, 2, 4, 5].forEach((n, k) => sfx.bar(n, k * 0.09)),
 };
 
-const soundToggles = document.querySelectorAll('[data-sound]');
+const toggles = () => document.querySelectorAll('[data-sound]');
 function setSound(on) {
   soundOn = on;
-  soundToggles.forEach((b) => b.setAttribute('aria-pressed', on));
+  toggles().forEach((b) => b.setAttribute('aria-pressed', on));
   try { localStorage.setItem('tnf-sound', on ? 'on' : 'off'); } catch {}
 }
-setSound(soundOn);
 requestAnimationFrame(() => requestAnimationFrame(() => document.documentElement.classList.add('snd-ready')));
-soundToggles.forEach((b) => b.addEventListener('click', () => {
-  setSound(!soundOn);
-  if (soundOn) NOTES.forEach((_, i) => sfx.bar(i, i * 0.07)); // a rainbow run to say hello
-}));
 
-// Rainbow xylophone: sweep with a mouse, or tap a band on touch screens
-document.querySelectorAll('.band').forEach((band, i) => {
-  band.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') sfx.bar(i); });
-  band.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') sfx.bar(i); });
-});
-document.querySelectorAll('.wall .note').forEach((n) => n.addEventListener('pointerenter', (e) => {
-  if (e.pointerType === 'mouse') sfx.tick();
-}));
 addEventListener('click', (e) => {
   const el = e.target.closest?.('.btn, .round-btn, .menu-btn, .prog-tab, .flip-btn, .nav-links a, .menu-links a, summary');
   if (!el || el.matches('[data-sound]')) return;
@@ -75,10 +62,10 @@ addEventListener('click', (e) => {
   else sfx.pop();
 });
 
-/* Header state, hero scroll depth, timeline progress — one rAF-throttled scroll handler */
+/* Header state, hero scroll depth, timeline progress: one rAF-throttled scroll handler */
 const header = document.querySelector('.site-header');
-const hero = document.querySelector('.hero');
-const tl = document.querySelector('.tl');
+let hero = null;
+let tl = null;
 let queued = false;
 function onScroll() {
   if (queued) return;
@@ -98,19 +85,6 @@ function onScroll() {
 }
 addEventListener('scroll', onScroll, { passive: true });
 addEventListener('resize', onScroll, { passive: true });
-onScroll();
-
-/* Hero depth: layers drift with the pointer (mouse/trackpad only) */
-if (hero && !reduce && matchMedia('(pointer: fine)').matches) {
-  hero.addEventListener('pointermove', (e) => {
-    hero.style.setProperty('--px', ((e.clientX / innerWidth - 0.5) * 2).toFixed(3));
-    hero.style.setProperty('--py', ((e.clientY / innerHeight - 0.5) * 2).toFixed(3));
-  });
-  hero.addEventListener('pointerleave', () => {
-    hero.style.setProperty('--px', 0);
-    hero.style.setProperty('--py', 0);
-  });
-}
 
 /* Reveal on scroll + number counters */
 function count(el) {
@@ -136,99 +110,138 @@ const io = new IntersectionObserver((entries) => {
     io.unobserve(en.target);
   }
 }, { rootMargin: '0px 0px -12% 0px' });
-document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
 
-/* Mobile menu (native popover): close after picking a link */
+/* Mobile menu (native popover): close after picking a link. Header never gets swapped, so this runs once. */
 const menu = document.getElementById('menu');
 menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => menu.hidePopover?.()));
 
-/* Tabs (programmes) — WAI-ARIA tabs pattern */
-document.querySelectorAll('[role="tablist"]').forEach((list) => {
-  const tabs = [...list.querySelectorAll('[role="tab"]')];
-  const select = (tab, focus) => {
-    for (const t of tabs) {
-      const on = t === tab;
-      t.setAttribute('aria-selected', on);
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-    }
-    if (focus) tab.focus();
-  };
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => select(tab));
-    tab.addEventListener('keydown', (e) => {
-      const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
-      let next = null;
-      if (step) next = tabs[(i + step + tabs.length) % tabs.length];
-      if (e.key === 'Home') next = tabs[0];
-      if (e.key === 'End') next = tabs[tabs.length - 1];
-      if (next) { e.preventDefault(); select(next, true); }
+/* Everything that lives inside a page. Runs on first load for the whole document,
+   and again for the new <main> each time the page transition swaps one in. */
+function init(root) {
+  toggles().forEach((b) => b.setAttribute('aria-pressed', soundOn));
+  root.querySelectorAll('[data-sound]').forEach((b) => b.addEventListener('click', () => {
+    setSound(!soundOn);
+    if (soundOn) NOTES.forEach((_, i) => sfx.bar(i, i * 0.07)); // a rainbow run to say hello
+  }));
+
+  // Rainbow xylophone: sweep with a mouse, or tap a band on touch screens
+  root.querySelectorAll('.band').forEach((band, i) => {
+    band.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') sfx.bar(i); });
+    band.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') sfx.bar(i); });
+  });
+  root.querySelectorAll('.wall .note').forEach((n) => n.addEventListener('pointerenter', (e) => {
+    if (e.pointerType === 'mouse') sfx.tick();
+  }));
+
+  hero = root.querySelector('.hero');
+  tl = root.querySelector('.tl');
+  /* Hero depth: layers drift with the pointer (mouse/trackpad only) */
+  if (hero && !reduce && matchMedia('(pointer: fine)').matches) {
+    const h = hero;
+    h.addEventListener('pointermove', (e) => {
+      h.style.setProperty('--px', ((e.clientX / innerWidth - 0.5) * 2).toFixed(3));
+      h.style.setProperty('--py', ((e.clientY / innerHeight - 0.5) * 2).toFixed(3));
+    });
+    h.addEventListener('pointerleave', () => {
+      h.style.setProperty('--px', 0);
+      h.style.setProperty('--py', 0);
+    });
+  }
+
+  root.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+  /* Tabs (programmes): WAI-ARIA tabs pattern */
+  root.querySelectorAll('[role="tablist"]').forEach((list) => {
+    const tabs = [...list.querySelectorAll('[role="tab"]')];
+    const select = (tab, focus) => {
+      for (const t of tabs) {
+        const on = t === tab;
+        t.setAttribute('aria-selected', on);
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      }
+      if (focus) tab.focus();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', (e) => {
+        const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+        let next = null;
+        if (step) next = tabs[(i + step + tabs.length) % tabs.length];
+        if (e.key === 'Home') next = tabs[0];
+        if (e.key === 'End') next = tabs[tabs.length - 1];
+        if (next) { e.preventDefault(); select(next, true); }
+      });
     });
   });
-});
 
-/* Team carousel buttons */
-document.querySelectorAll('[data-scroll]').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    const track = document.getElementById(btn.getAttribute('aria-controls'));
-    const step = track.firstElementChild.getBoundingClientRect().width + 22;
-    track.scrollBy({ left: step * Number(btn.dataset.scroll), behavior: reduce ? 'auto' : 'smooth' });
+  /* Team carousel buttons */
+  root.querySelectorAll('[data-scroll]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const track = document.getElementById(btn.getAttribute('aria-controls'));
+      const step = track.firstElementChild.getBoundingClientRect().width + 22;
+      track.scrollBy({ left: step * Number(btn.dataset.scroll), behavior: reduce ? 'auto' : 'smooth' });
+    });
   });
-});
 
-/* Myth / fact flip cards: hidden face is inert so focus never lands on it */
-document.querySelectorAll('.flip').forEach((card) => {
-  const [front, back] = card.querySelectorAll('.face');
-  back.inert = true;
-  card.querySelectorAll('.flip-btn').forEach((b) => b.addEventListener('click', () => {
-    const flipped = card.classList.toggle('is-flipped');
-    front.inert = flipped;
-    back.inert = !flipped;
-    (flipped ? back : front).querySelector('.flip-btn').focus({ preventScroll: true });
-  }));
-});
+  /* Myth / fact flip cards: hidden face is inert so focus never lands on it */
+  root.querySelectorAll('.flip').forEach((card) => {
+    const [front, back] = card.querySelectorAll('.face');
+    back.inert = true;
+    card.querySelectorAll('.flip-btn').forEach((b) => b.addEventListener('click', () => {
+      const flipped = card.classList.toggle('is-flipped');
+      front.inert = flipped;
+      back.inert = !flipped;
+      (flipped ? back : front).querySelector('.flip-btn').focus({ preventScroll: true });
+    }));
+  });
 
-/* Contact form: no server, so it hands the message to WhatsApp */
-const form = document.getElementById('enquiry');
-if (form) {
-  const done = document.getElementById('enquiry-done');
-  const waLink = done.querySelector('[data-wa]');
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const f = new FormData(form);
-    const text = [
-      `Hi Tots & Friends! (${f.get('enquiry')})`,
-      '',
-      `Name: ${f.get('name')}`,
-      `Email: ${f.get('email')}`,
-      `Phone: ${f.get('phone')}`,
-      '',
-      f.get('message'),
-    ].join('\n');
-    const url = 'https://wa.me/60173078621?text=' + encodeURIComponent(text);
-    waLink.href = url;
-    window.open(url, '_blank', 'noopener');
-    sfx.chime();
-    form.hidden = true;
-    done.hidden = false;
-    done.focus();
-  });
-  done.querySelector('[data-reset]').addEventListener('click', () => {
-    form.reset();
-    done.hidden = true;
-    form.hidden = false;
-    form.querySelector('input').focus();
-  });
+  /* Contact form: no server, so it hands the message to WhatsApp */
+  const form = root.querySelector('#enquiry');
+  if (form) {
+    const done = document.getElementById('enquiry-done');
+    const waLink = done.querySelector('[data-wa]');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const f = new FormData(form);
+      const text = [
+        `Hi Tots & Friends! (${f.get('enquiry')})`,
+        '',
+        `Name: ${f.get('name')}`,
+        `Email: ${f.get('email')}`,
+        `Phone: ${f.get('phone')}`,
+        '',
+        f.get('message'),
+      ].join('\n');
+      const url = 'https://wa.me/60173078621?text=' + encodeURIComponent(text);
+      waLink.href = url;
+      window.open(url, '_blank', 'noopener');
+      sfx.chime();
+      form.hidden = true;
+      done.hidden = false;
+      done.focus();
+    });
+    done.querySelector('[data-reset]').addEventListener('click', () => {
+      form.reset();
+      done.hidden = true;
+      form.hidden = false;
+      form.querySelector('input').focus();
+    });
+  }
+
+  onScroll();
 }
+init(document);
 
-/* Ribbon page transition, in two phases so a slow network never freezes it mid-motion.
-   Phase 1 (old page): five bands sweep up and cover the screen, then we navigate.
-   Phase 2 (new page): the bands lift off at once, the moment the page paints.
-   The page is prefetched on hover/click, so the covered screen is held for as short a time as possible. */
-if (!reduce) {
-  const IN = 1100, STEP = 100; // cover: ms per band, ms between bands (slower = more ribbon to enjoy)
-  const OUT = 1000;            // reveal: ms. All bands lift together, so there is no dead time before it starts
-  const HOLD = -12;            // vh: where the bands rest once the screen is covered
+/* Ribbon page transition (after cue146 on cuedesign.space).
+   One document, no reload: a link click fetches the next page while five curved bands sweep up
+   and cover the screen. When the cover is complete the <main> is swapped (the screen is covered and
+   still, so heavy work cannot make it jank), then the bands lift off to reveal the new page.
+   The network only has to beat the sweep (about 1.5s), and hovering a link starts the fetch early.
+   Anything unexpected falls back to a normal page load. */
+if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
+  const IN = 1100, STEP = 90, OUT = 950; // ms: cover (per band, between bands), reveal
+  const HOLD = -12;                      // vh: where the bands rest while the screen is covered
   const bands = [['--yellow', 8, 50], ['--red', 10, 46], ['--pink', 7, 54], ['--yellow', 9, 48], ['--red', 8, 52]]; // colour, edge sag (vh), arc peak x
   const pt = document.createElement('div');
   pt.className = 'pt';
@@ -237,59 +250,95 @@ if (!reduce) {
     `<svg viewBox="0 0 100 116" preserveAspectRatio="none"><path fill="var(${c})" d="M0 0Q${x} ${s * 2} 100 0V116H0Z"/></svg>`).join('');
   document.body.append(pt);
 
-  const slide = (from, to, easing, duration, stagger) => [...pt.children].map((el, i) => el.animate(
+  const slide = (from, to, easing, duration, stagger) => Promise.all([...pt.children].map((el, i) => el.animate(
     [{ transform: `translateY(${from}vh)` }, { transform: `translateY(${to}vh)` }],
-    { duration, delay: i * stagger, easing, fill: 'both' }));
-  const done = (anims) => Promise.all(anims.map((a) => a.finished));
+    { duration, delay: i * stagger, easing, fill: 'both' }).finished));
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  const frames = (n) => new Promise((r) => { const f = () => (n-- > 0 ? requestAnimationFrame(f) : r()); f(); });
   const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); };
 
-  // Arriving: sit covered for exactly one frame, then lift
-  let arrived = false;
-  try { arrived = !!sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch {}
-  if (arrived) {
-    pt.classList.add('on');
-    const reveal = slide(HOLD, -116, 'cubic-bezier(.4,0,.2,1)', OUT, 0);
-    reveal.forEach((a) => a.pause());
-    document.documentElement.classList.remove('pt-in');
-    const go = () => reveal.forEach((a) => a.play());
-    requestAnimationFrame(go);
-    setTimeout(go, 400); // safety net: never leave the page covered
-    done(reveal).then(reset, () => {});
-  }
-
-  // Warm the next page early: on hover/touch, and again the moment the click starts the cover
-  const warmed = new Set();
-  const warm = (a) => {
-    if (warmed.has(a.href)) return;
-    warmed.add(a.href);
-    const l = document.createElement('link');
-    l.rel = 'prefetch'; l.href = a.href;
-    document.head.append(l);
+  // Fetch pages once per session; hovering a link warms the cache
+  const pages = new Map();
+  const load = (href) => {
+    const u = new URL(href, location.href);
+    u.hash = '';
+    if (!pages.has(u.href)) {
+      pages.set(u.href, fetch(u.href).then(async (res) => {
+        if (!res.ok || !(res.headers.get('content-type') || '').includes('text/html')) throw new Error(res.status);
+        return { url: res.url, html: await res.text() };
+      }).catch((err) => { pages.delete(u.href); throw err; }));
+    }
+    return pages.get(u.href);
   };
-  const internal = (a) => a && a.origin === location.origin && !a.target && !a.hasAttribute('download') &&
-    !(a.pathname === location.pathname && a.search === location.search);
-  for (const ev of ['pointerenter', 'touchstart', 'focusin']) {
-    document.addEventListener(ev, (e) => { const a = e.target.closest?.('a[href]'); if (internal(a)) warm(a); }, { capture: true, passive: true });
-  }
 
-  let leaving = false;
+  // Decode the new page's first images while the bands are still rising, so they do not pop in
+  const preload = (doc) => Promise.all([...doc.querySelectorAll('main img[src]')].slice(0, 8).map((img) => {
+    const im = new Image();
+    im.src = new URL(img.getAttribute('src'), location.href).href;
+    return im.decode().catch(() => {});
+  }));
+
+  let shown = location.pathname + location.search; // which page is on screen
+  let busy = false;
+  const swap = ({ url, html }, hash, push) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const next = doc.querySelector('main');
+    if (!next) throw new Error('no main');
+    document.title = doc.title;
+    for (const [sel, attr] of [['meta[name="description"]', 'content'], ['link[rel="canonical"]', 'href']]) {
+      const mine = document.head.querySelector(sel), theirs = doc.head.querySelector(sel);
+      if (mine && theirs) mine.setAttribute(attr, theirs.getAttribute(attr));
+    }
+    const theirs = doc.querySelectorAll('.nav-links a, .menu-links a');
+    document.querySelectorAll('.nav-links a, .menu-links a').forEach((a, i) => {
+      const c = theirs[i]?.getAttribute('aria-current');
+      if (c) a.setAttribute('aria-current', c); else a.removeAttribute('aria-current');
+    });
+    document.querySelector('main').replaceWith(document.adoptNode(next));
+    const u = new URL(url, location.href);
+    if (push) history.pushState(null, '', u.pathname + u.search + hash);
+    shown = u.pathname + u.search;
+    scrollTo({ top: 0, behavior: 'instant' });
+    init(next);
+    document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
+    next.tabIndex = -1;
+    next.focus({ preventScroll: true });
+  };
+
+  const go = async (href, push = true) => {
+    busy = true;
+    const hash = new URL(href, location.href).hash;
+    pt.classList.add('on');
+    const page = load(href);
+    try {
+      const [, { url, html }] = await Promise.all([slide(100, HOLD, 'cubic-bezier(.45,0,.55,1)', IN, STEP), page]);
+      await Promise.race([preload(new DOMParser().parseFromString(html, 'text/html')), wait(600)]);
+      swap({ url, html }, hash, push);
+      await frames(2);                                          // let the new page paint under the cover
+      await slide(HOLD, -116, 'cubic-bezier(.4,0,.2,1)', OUT, 0);
+    } catch {
+      location.href = href;                                     // never trap the visitor
+      return;
+    }
+    reset();
+    busy = false;
+  };
+
+  const internal = (a) => a && /^https?:$/.test(a.protocol) && a.origin === location.origin && !a.target &&
+    !a.hasAttribute('download') && !(a.pathname === location.pathname && a.search === location.search);
+  for (const ev of ['pointerenter', 'touchstart', 'focusin']) {
+    document.addEventListener(ev, (e) => { const a = e.target.closest?.('a[href]'); if (internal(a)) load(a.href).catch(() => {}); }, { capture: true, passive: true });
+  }
   addEventListener('click', (e) => {
     const a = e.target.closest?.('a[href]');
-    if (!internal(a) || leaving || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (!internal(a) || busy || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
-    leaving = true;
-    warm(a);
-    pt.classList.add('on');
-    done(slide(100, HOLD, 'cubic-bezier(.45,0,.55,1)', IN, STEP)).then(() => {
-      try { sessionStorage.setItem('pt', '1'); } catch {}
-      location.href = a.href;
-    });
+    go(a.href);
   });
-  // Back/forward cache restores the page mid-cover: clear it
-  addEventListener('pageshow', (e) => {
-    if (!e.persisted) return;
-    leaving = false;
-    reset();
-    try { sessionStorage.removeItem('pt'); } catch {}
+  addEventListener('popstate', () => {
+    if (location.pathname + location.search === shown) return; // only the #hash changed
+    if (busy) location.reload();
+    else go(location.href, false);
   });
+  addEventListener('pageshow', (e) => { if (e.persisted) { reset(); busy = false; } });
 }

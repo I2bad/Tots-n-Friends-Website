@@ -886,9 +886,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 /* Ribbon page transition (driven by main.js) */
 .pt { position: fixed; inset: 0; z-index: 9999; overflow: hidden; pointer-events: none; visibility: hidden; }
 .pt.on { visibility: visible; pointer-events: auto; }
-.pt svg { position: absolute; left: 0; top: 0; width: 100%; height: 116vh; transform: translateY(100vh); }
-/* Arriving page starts fully covered, so nothing flashes before main.js runs */
-html.pt-in::before { content: ""; position: fixed; inset: 0; z-index: 9998; background: var(--red); }
+.pt svg { position: absolute; left: 0; top: 0; width: 100%; height: 116vh; transform: translateY(100vh); will-change: transform; }
 
 /* Sound toggles: liquid fill. Two wave layers rise (and drain) with a slow slosh.
    The wave tile is 16px tall; translate 0 -16px = full, 0 100% = empty. */
@@ -938,3 +936,5 @@ html.snd-ready [data-sound]::after { transition: translate 1.1s cubic-bezier(.22
 .btn-ghost .i { transition: translate .4s var(--ease-spring); }
 .btn-ghost:hover .i { translate: 4px 0; }
 @media (prefers-reduced-motion: reduce) { .btn-ghost::before, .btn-ghost::after { animation: none; transition: none; } }
+
+#main:focus { outline: 0; } /* focus moves here after a page transition, for screen readers */
