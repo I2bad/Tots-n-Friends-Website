@@ -15,9 +15,17 @@ RewriteRule ^parents\.html$ /philosophy [R=301,L]
 RewriteCond %{THE_REQUEST} "\s/+contact\.html[?\s]"
 RewriteRule ^contact\.html$ /contact [R=301,L]
 
-RewriteRule ^(timeline|philosophy|contact)/$ /$1 [R=301,L]
+RewriteCond %{THE_REQUEST} "\s/+progress\.html[?\s]"
+RewriteRule ^progress\.html$ /progress [R=301,L]
+
+RewriteCond %{THE_REQUEST} "\s/+programmes\.html[?\s]"
+RewriteRule ^programmes\.html$ /programmes [R=301,L]
+
+RewriteRule ^(timeline|philosophy|contact|progress|programmes)/$ /$1 [R=301,L]
 
 # Keep the URLs already published by the live site.
 RewriteRule ^timeline$ story.html [L]
 RewriteRule ^philosophy$ parents.html [L]
 RewriteRule ^contact$ contact.html [L]
+RewriteRule ^progress$ progress.html [L]
+RewriteRule ^programmes$ programmes.html [L]

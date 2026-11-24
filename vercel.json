@@ -26,6 +26,11 @@
       "source": "/progress.html",
       "destination": "/progress",
       "permanent": true
+    },
+    {
+      "source": "/programmes.html",
+      "destination": "/programmes",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -44,6 +49,10 @@
     {
       "source": "/progress",
       "destination": "/progress.html"
+    },
+    {
+      "source": "/programmes",
+      "destination": "/programmes.html"
     }
   ],
   "headers": [

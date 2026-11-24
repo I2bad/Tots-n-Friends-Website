@@ -388,7 +388,7 @@ html:has(#menu:popover-open) { overflow: hidden; }
 @keyframes rise { from { opacity: 0; translate: 0 .45em; filter: blur(8px); } }
 @keyframes pop { from { opacity: 0; translate: 0 .5em; scale: .4; } }
 @keyframes hop { 40% { translate: 0 -.18em; } }
-.hero-sub { max-width: 45cqi; font-size: max(15px, 1.42cqi); line-height: 1.55; color: var(--ink-2); animation: rise 1s var(--ease-out) 1s backwards; }
+.hero-sub { max-width: 45cqi; font-size: max(15px, 1.42cqi); line-height: 1.55; color: var(--ink-2); }
 .hero-ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.1cqi; margin-top: .5cqi; animation: rise 1s var(--ease-out) 1.15s backwards; }
 .hero-ctas .btn { font-size: max(15px, 1.2cqi); min-height: max(48px, 4.2cqi); padding-inline: max(22px, 2.1cqi); }
 .hero-ctas .btn-ghost { background: color-mix(in srgb, var(--card) 70%, transparent); }
@@ -714,7 +714,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .page-hero-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 72px); align-items: end; }
 .page-hero h1 { font-size: var(--step-5); margin: 20px 0 24px; letter-spacing: -.035em; }
 .page-hero .lede { max-width: 40ch; font-size: clamp(1.18rem, 1.08rem + .5vw, 1.5rem); }
-.page-hero > .wrap > * { animation: rise 1s var(--ease-out) backwards; }
+.page-hero > .wrap > :not(:first-child) { animation: rise 1s var(--ease-out) backwards; }
 
 /* rainbow gauge (For Parents, Our Story) */
 .gauge-art { position: relative; }
@@ -1116,3 +1116,22 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 @media (max-width: 920px) {
   .levels, .result-top { grid-template-columns: 1fr; }
 }
+
+/* Childcare programmes */
+.programme-hero-photo { overflow: hidden; width: min(100%, 310px); justify-self: center; aspect-ratio: 4 / 5; }
+.programme-hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+.programmes-detail { padding-top: clamp(24px, 5vw, 70px); }
+.programme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 310px), 1fr)); gap: 20px; }
+.programme-card {
+  display: grid; align-content: start; gap: 14px; padding: clamp(22px, 4vw, 34px);
+  background: var(--card); border-radius: var(--radius); border-top: 5px solid var(--programme-colour);
+  box-shadow: var(--shadow);
+}
+.programme-card h3 { font-size: var(--step-2); }
+.programme-tag { color: var(--ink-2); font-weight: 700; }
+.programme-hours { display: grid; gap: 8px; margin: 0; }
+.programme-hours div { display: flex; flex-wrap: wrap; gap: 4px 14px; justify-content: space-between; }
+.programme-hours dt { font-weight: 700; }
+.programme-hours dd { margin: 0; }
+.programme-visit { padding-top: 0; }
+.programme-visit .section-head { margin-bottom: 24px; }
