@@ -66,6 +66,9 @@ addEventListener('click', (e) => {
 const header = document.querySelector('.site-header');
 let hero = null;
 let tl = null;
+let milestones = [];
+let currentMilestone = null;
+const smallTimeline = matchMedia('(max-width: 900px)');
 let queued = false;
 function onScroll() {
   if (queued) return;
@@ -79,7 +82,21 @@ function onScroll() {
     }
     if (tl) {
       const r = tl.getBoundingClientRect();
-      tl.style.setProperty('--p', clamp01((innerHeight * 0.6 - r.top) / r.height).toFixed(3));
+      const readingPoint = innerHeight * 0.6 - r.top;
+      let next = null;
+      if (smallTimeline.matches && readingPoint >= 0 && readingPoint < r.height) {
+        // Keep the current story active through the gap until the next year reaches the reading line.
+        for (const milestone of milestones) {
+          if (milestone.offsetTop > readingPoint) break;
+          next = milestone;
+        }
+      }
+      tl.style.setProperty('--p', clamp01(readingPoint / r.height).toFixed(3));
+      if (next !== currentMilestone) {
+        currentMilestone?.classList.remove('is-current');
+        next?.classList.add('is-current');
+        currentMilestone = next;
+      }
     }
   });
 }
@@ -135,6 +152,8 @@ function init(root) {
 
   hero = root.querySelector('.hero');
   tl = root.querySelector('.tl');
+  milestones = tl ? [...tl.querySelectorAll('.tl-item')] : [];
+  currentMilestone = null;
   /* Hero depth: layers drift with the pointer (mouse/trackpad only) */
   if (hero && !reduce && matchMedia('(pointer: fine)').matches) {
     const h = hero;
@@ -240,7 +259,7 @@ init(document);
    The network only has to beat the sweep (about 1s), and hovering a link starts the fetch early.
    Anything unexpected falls back to a normal page load. */
 if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
-  const IN = 750, STEP = 65, OUT = 650;  // ms: cover (per band, between bands), reveal
+  const IN = 480, STEP = 132, OUT = 650; // ms: cover (per band, gap between bands), reveal. Cover total = IN + 4 * STEP, about 1s
   const HOLD = -22;                      // vh: where the bands rest while the screen is covered
   const H = 128;                         // vh: band height
   const colours = ['--yellow', '--red', '--pink', '--yellow', '--red'];
@@ -267,7 +286,7 @@ if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
   let look = [];
   const roll = () => {
     kids.forEach((el) => el.firstChild.setAttribute('d', edge()));
-    look = kids.map(() => ({ s: [rand(-2.5, 2.5), rand(-2.5, 2.5), rand(-1.2, 1.2)], ease: EASES[Math.floor(Math.random() * EASES.length)], k: rand(0.92, 1.12), j: rand(-15, 30) }));
+    look = kids.map(() => ({ s: [rand(-2.5, 2.5), rand(-2.5, 2.5), rand(-1.2, 1.2)], ease: EASES[Math.floor(Math.random() * EASES.length)], k: rand(0.92, 1.12), j: rand(-30, 50) }));
   };
   const cover = () => Promise.all(kids.map((el, i) => sway(el, 100, HOLD, look[i].s, look[i].ease, IN * look[i].k, i * STEP + look[i].j)));
   const lift = () => Promise.all(kids.map((el, i) => sway(el, HOLD, -(H + 14), [look[i].s[2], rand(-2, 2), rand(-2, 2)], look[i].ease, OUT * rand(0.95, 1.1), (kids.length - 1 - i) * 16)));
