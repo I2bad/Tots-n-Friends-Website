@@ -886,7 +886,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 /* Ribbon page transition (driven by main.js) */
 .pt { position: fixed; inset: 0; z-index: 9999; overflow: hidden; pointer-events: none; visibility: hidden; }
 .pt.on { visibility: visible; pointer-events: auto; }
-.pt svg { position: absolute; left: 0; top: 0; width: 100%; height: 116vh; transform: translateY(100vh); will-change: transform; }
+.pt svg { position: absolute; left: 0; top: 0; width: 100%; height: 128vh; transform: translateY(100vh); transform-origin: 50% 0; will-change: transform; }
 
 /* Sound toggles: liquid fill. Two wave layers rise (and drain) with a slow slosh.
    The wave tile is 16px tall; translate 0 -16px = full, 0 100% = empty. */

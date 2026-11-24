@@ -237,22 +237,40 @@ init(document);
    One document, no reload: a link click fetches the next page while five curved bands sweep up
    and cover the screen. When the cover is complete the <main> is swapped (the screen is covered and
    still, so heavy work cannot make it jank), then the bands lift off to reveal the new page.
-   The network only has to beat the sweep (about 1.5s), and hovering a link starts the fetch early.
+   The network only has to beat the sweep (about 1s), and hovering a link starts the fetch early.
    Anything unexpected falls back to a normal page load. */
 if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
-  const IN = 1100, STEP = 90, OUT = 950; // ms: cover (per band, between bands), reveal
-  const HOLD = -12;                      // vh: where the bands rest while the screen is covered
-  const bands = [['--yellow', 8, 50], ['--red', 10, 46], ['--pink', 7, 54], ['--yellow', 9, 48], ['--red', 8, 52]]; // colour, edge sag (vh), arc peak x
+  const IN = 750, STEP = 65, OUT = 650;  // ms: cover (per band, between bands), reveal
+  const HOLD = -22;                      // vh: where the bands rest while the screen is covered
+  const H = 128;                         // vh: band height
+  const colours = ['--yellow', '--red', '--pink', '--yellow', '--red'];
   const pt = document.createElement('div');
   pt.className = 'pt';
   pt.setAttribute('aria-hidden', 'true');
-  pt.innerHTML = bands.map(([c, s, x]) =>
-    `<svg viewBox="0 0 100 116" preserveAspectRatio="none"><path fill="var(${c})" d="M0 0Q${x} ${s * 2} 100 0V116H0Z"/></svg>`).join('');
+  pt.innerHTML = colours.map((c) => `<svg viewBox="0 0 100 ${H}" preserveAspectRatio="none"><path fill="var(${c})"/></svg>`).join('');
   document.body.append(pt);
+  const kids = [...pt.children];
 
-  const slide = (from, to, easing, duration, stagger) => Promise.all([...pt.children].map((el, i) => el.animate(
-    [{ transform: `translateY(${from}vh)` }, { transform: `translateY(${to}vh)` }],
-    { duration, delay: i * stagger, easing, fill: 'both' }).finished));
+  // Liquid, not tidy: every band gets its own hand-drawn edge (tilt, depth, where the dip lands),
+  // sways (skews) as it travels, and runs at its own pace. A new look on every click.
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const EASES = ['cubic-bezier(.65,0,.35,1)', 'cubic-bezier(.55,0,.3,1)', 'cubic-bezier(.72,0,.42,1)'];
+  const edge = () => {
+    const sag = rand(5, 9), L = rand(-3, 3), R = rand(-3, 3);
+    return `M0 ${L.toFixed(1)}C${rand(16, 44).toFixed(1)} ${(L + sag * rand(1.3, 1.9)).toFixed(1)} ${rand(56, 84).toFixed(1)} ${(R + sag * rand(1.3, 1.9)).toFixed(1)} 100 ${R.toFixed(1)}V${H}H0Z`;
+  };
+  const sway = (el, from, to, [s0, s1, s2], easing, duration, delay) => el.animate([
+    { transform: `translateY(${from}vh) skewY(${s0}deg)` },
+    { transform: `translateY(${(from + to) / 2}vh) skewY(${s1}deg)`, offset: 0.5 },
+    { transform: `translateY(${to}vh) skewY(${s2}deg)` },
+  ], { duration, delay: Math.max(0, delay), easing, fill: 'both' }).finished;
+  let look = [];
+  const roll = () => {
+    kids.forEach((el) => el.firstChild.setAttribute('d', edge()));
+    look = kids.map(() => ({ s: [rand(-2.5, 2.5), rand(-2.5, 2.5), rand(-1.2, 1.2)], ease: EASES[Math.floor(Math.random() * EASES.length)], k: rand(0.92, 1.12), j: rand(-15, 30) }));
+  };
+  const cover = () => Promise.all(kids.map((el, i) => sway(el, 100, HOLD, look[i].s, look[i].ease, IN * look[i].k, i * STEP + look[i].j)));
+  const lift = () => Promise.all(kids.map((el, i) => sway(el, HOLD, -(H + 14), [look[i].s[2], rand(-2, 2), rand(-2, 2)], look[i].ease, OUT * rand(0.95, 1.1), (kids.length - 1 - i) * 16)));
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
   const frames = (n) => new Promise((r) => { const f = () => (n-- > 0 ? requestAnimationFrame(f) : r()); f(); });
   const reset = () => { pt.getAnimations({ subtree: true }).forEach((a) => a.cancel()); pt.classList.remove('on'); };
@@ -308,14 +326,16 @@ if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
   const go = async (href, push = true) => {
     busy = true;
     const hash = new URL(href, location.href).hash;
+    roll();
     pt.classList.add('on');
     const page = load(href);
+    const images = page.then(({ html }) => preload(new DOMParser().parseFromString(html, 'text/html'))).catch(() => {}); // starts as soon as the HTML lands
     try {
-      const [, { url, html }] = await Promise.all([slide(100, HOLD, 'cubic-bezier(.45,0,.55,1)', IN, STEP), page]);
-      await Promise.race([preload(new DOMParser().parseFromString(html, 'text/html')), wait(600)]);
+      const [, { url, html }] = await Promise.all([cover(), page]);
+      await Promise.race([images, wait(250)]);
       swap({ url, html }, hash, push);
       await frames(2);                                          // let the new page paint under the cover
-      await slide(HOLD, -116, 'cubic-bezier(.4,0,.2,1)', OUT, 0);
+      await lift();
     } catch {
       location.href = href;                                     // never trap the visitor
       return;
