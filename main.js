@@ -484,6 +484,16 @@ function init(root) {
     });
   });
 
+  /* Teacher cards: "Read more" swaps the short quote for their full words */
+  root.querySelectorAll('.member-more').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open);
+      document.getElementById(btn.getAttribute('aria-controls')).hidden = !open;
+      btn.closest('.member').classList.toggle('is-open', open);
+    });
+  });
+
   /* Myth / fact flip cards: hidden face is inert so focus never lands on it */
   root.querySelectorAll('.flip').forEach((card) => {
     const [front, back] = card.querySelectorAll('.face');

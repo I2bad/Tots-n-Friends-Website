@@ -586,44 +586,47 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; }
 .team-track {
   --edge: max(var(--gutter), (100vw - var(--wrap)) / 2);
   display: grid; grid-auto-flow: column; grid-auto-columns: clamp(220px, 22vw, 270px); gap: 22px;
-  list-style: none; margin: 0; padding: 12px var(--edge) 28px;
+  list-style: none; margin: 0; padding: 26px var(--edge) 28px;
   overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--edge);
   scrollbar-width: none;
 }
 .team-track::-webkit-scrollbar { display: none; }
-.member { scroll-snap-align: start; display: grid; gap: 14px; align-content: start; }
-.member .member-photo { margin-bottom: 4px; }
-.member-photo { aspect-ratio: 4 / 5; overflow: hidden; background: color-mix(in srgb, var(--c) 30%, var(--paper)); }
+.member { scroll-snap-align: start; display: grid; gap: 12px; align-content: start; --rot: -2deg; }
+.member:nth-child(3n+2) { --rot: 1.6deg; }
+.member:nth-child(3n) { --rot: -.8deg; }
+/* Each teacher is a taped polaroid, as in the Day at Tots scene and the Story walk. */
+.member-pol {
+  position: relative; margin: 0 0 6px; padding: 10px 10px 0;
+  background: #fffdf9; border-radius: 6px;
+  box-shadow: 0 1px 1px rgba(29, 25, 48, .08), 0 18px 34px -16px rgba(29, 25, 48, .45);
+  rotate: var(--rot); transition: rotate .45s var(--ease-spring), scale .45s var(--ease-spring);
+}
+.member-pol::before { /* washi tape in the teacher's colour */
+  content: ""; position: absolute; z-index: 1; top: -12px; left: 50%; width: 92px; height: 26px; translate: -50% 0; rotate: -5deg;
+  background: color-mix(in srgb, var(--c) 55%, transparent); box-shadow: 0 1px 2px rgba(29, 25, 48, .1);
+}
+.member:hover .member-pol { rotate: 0deg; scale: 1.03; }
+.member-photo { aspect-ratio: 4 / 5; overflow: hidden; border-radius: 3px; background: color-mix(in srgb, var(--c) 30%, var(--paper)); }
 /* Crop the narrow dark strip at the edge of the source portraits. */
 .member-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 6%; scale: 1.025; transition: scale .7s var(--ease-out); }
-.member:hover .member-photo img { scale: 1.05; }
-.member h3 { font-size: var(--step-1); display: flex; align-items: center; gap: 10px; }
-.member h3::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--c); flex: none; }
-/* Each teacher's words sit in a thought bubble that pops up on hover (tap or Tab on touch and keyboard). */
-.member { position: relative; outline-offset: 6px; cursor: default; }
-.member-say {
-  position: absolute; z-index: 2; left: 10px; right: 10px; bottom: calc(var(--step-1) * 1.05 + 32px); /* sits low on the photo, under the face */
-  padding: 14px 16px; border-radius: var(--r-md);
-  background: var(--card); color: var(--ink);
-  font: italic 500 .84rem/1.42 var(--font-display); font-variation-settings: "SOFT" 100;
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent), var(--shadow);
-  opacity: 0; translate: 0 12px; scale: .9; transform-origin: 50% 0;
-  transition: opacity .25s, translate .5s var(--ease-spring), scale .5s var(--ease-spring);
-  pointer-events: none;
+.member:hover .member-photo img { scale: 1.06; }
+.member-pol figcaption { padding: 8px 0 12px; text-align: center; }
+.member h3 { font: 700 1.6rem/1 var(--font-hand); color: var(--ink); }
+.member-quote, .member-full { margin: 0; padding-inline: 4px; color: var(--ink-2); }
+.member-quote { font: 600 1.3rem/1.15 var(--font-hand); }
+.member-full { font-size: .95rem; line-height: 1.55; }
+.member.is-open .member-quote { display: none; }
+.member-more {
+  justify-self: start; display: inline-flex; align-items: center; gap: 6px; margin-left: 4px; padding: 4px 0;
+  border: 0; background: none; cursor: pointer;
+  font: 700 var(--step--1)/1 var(--font-body); color: var(--ink);
+  text-decoration: underline 2px color-mix(in srgb, var(--c) 60%, transparent); text-underline-offset: 5px;
 }
-.member-say::before, .member-say::after { /* thought dots rising to the teacher's head */
-  content: ""; position: absolute; border-radius: 50%; background: var(--card);
-  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--c) 45%, transparent), 0 6px 12px -6px rgba(29, 25, 48, .35);
-}
-.member-say::before { width: 16px; height: 16px; left: 52%; top: -24px; }
-.member-say::after { width: 9px; height: 9px; left: 46%; top: -40px; }
-.member:is(:hover, :focus, :focus-within) .member-say { opacity: 1; translate: 0 0; scale: 1; }
-.member .member-photo img { transition: scale .7s var(--ease-out), filter .4s; }
-.member:is(:hover, :focus, :focus-within) .member-photo img { filter: brightness(.82) saturate(.9); }
-.team-hint { margin-top: 2px; color: var(--ink-3); font: 600 1.35rem/1.2 var(--font-hand); }
-.hint-tap { display: none; }
-@media (hover: none) { .hint-hover { display: none; } .hint-tap { display: inline; } }
-@media (prefers-reduced-motion: reduce) { .member-say { translate: none; scale: 1; transition: opacity .2s; } }
+.member-more .i { width: 15px; height: 15px; color: var(--c); transition: rotate .35s var(--ease-spring); }
+.member-more[aria-expanded="true"] .i { rotate: 45deg; }
+.member-more .more-close, .member-more[aria-expanded="true"] .more-open { display: none; }
+.member-more[aria-expanded="true"] .more-close { display: inline; }
+@media (prefers-reduced-motion: reduce) { .member-pol, .member-photo img { transition: none; } }
 
 /* ---------- testimonials ----------
    One stage, one colour: the carousel sits on the section background (no seam).
@@ -1169,7 +1172,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .day { padding-bottom: 0; }
 .day-pin { position: relative; height: 520svh; }
 /* the heading stays on screen for the whole day */
-.day-title { position: absolute; z-index: 2; left: 0; right: 0; top: clamp(84px, 11vh, 112px); padding-inline: var(--gutter); text-align: center; font-size: clamp(1.7rem, 2.8vw, 2.6rem); color: var(--ink); transition: color .8s; }
+.day-title { position: absolute; z-index: 2; left: 0; right: 0; top: clamp(118px, 17vh, 168px); padding-inline: var(--gutter); text-align: center; font-size: clamp(1.7rem, 2.8vw, 2.6rem); color: var(--ink); transition: color .8s; }
 .day-stage.is-night .day-title { color: var(--cream); }
 .day-stage {
   --p: 0; --night: 0;
@@ -1202,7 +1205,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .day-near .day-prop { width: clamp(56px, 5vw, 84px); }
 .day-prop.day-house { width: clamp(110px, 10vw, 160px); bottom: 46%; }
 .lit { opacity: var(--night); }
-.day-track { --pw: min(80vw, 820px); position: relative; z-index: 1; display: flex; gap: 6vw; height: 100%; align-items: center; padding: clamp(150px, 21vh, 196px) calc((100vw - var(--pw)) / 2) 84px; width: max-content; will-change: transform; }
+.day-track { --pw: min(80vw, 820px); position: relative; z-index: 1; display: flex; gap: 6vw; height: 100%; align-items: center; padding: clamp(196px, 28vh, 252px) calc((100vw - var(--pw)) / 2) 64px; width: max-content; will-change: transform; }
 .day-panel { flex: none; width: var(--pw); display: grid; grid-template-columns: .62fr 1fr; gap: clamp(18px, 2.5vw, 36px); align-items: center; transition: opacity .5s, scale .6s var(--ease-out); }
 .day-panel:not(.on) { opacity: .35; scale: .94; }
 .day-photo { position: relative; padding: 8px 8px 36px; background: #fffdf9; border-radius: 8px; box-shadow: 0 1px 1px rgba(29, 25, 48, .08), 0 26px 40px -18px rgba(29, 25, 48, .4); rotate: var(--rot, -3deg); }
@@ -1230,8 +1233,8 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .day-ruler li.done::before { scale: 1.15; }
 .day-ruler li.done::before { background: var(--c); }
 @media (max-width: 760px) {
-  .day-title { top: 84px; font-size: 1.6rem; }
-  .day-track { padding-top: 136px; padding-bottom: 76px; }
+  .day-title { top: 112px; font-size: 1.6rem; }
+  .day-track { padding-top: 164px; padding-bottom: 64px; }
   .day-panel { grid-template-columns: 1fr; gap: 12px; align-content: center; }
   .day-photo { width: 38%; justify-self: center; padding: 6px 6px 28px; }
   .day-photo figcaption { font-size: 1.05rem; bottom: 4px; }
