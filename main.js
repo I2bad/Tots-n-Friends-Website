@@ -61,10 +61,9 @@ addEventListener('click', (e) => {
   else sfx.pop();
 });
 
-/* Header state, hero scroll depth, timeline progress: one rAF-throttled scroll handler */
+/* Header state, hero scroll depth and per-page scroll effects: one rAF-throttled scroll handler */
 const header = document.querySelector('.site-header');
 let hero = null;
-let tl = null;
 let scrollers = []; // per-page scroll effects, rebuilt by init() after each page swap
 let sizers = [];    // per-page measurements, rerun on resize
 let queued = false;
@@ -77,10 +76,6 @@ function onScroll() {
     if (hero && !reduce) {
       const r = hero.getBoundingClientRect();
       hero.style.setProperty('--sy', clamp01(-r.top / r.height).toFixed(3));
-    }
-    if (tl) {
-      const r = tl.getBoundingClientRect();
-      tl.style.setProperty('--p', clamp01((innerHeight * 0.6 - r.top) / r.height).toFixed(3));
     }
     for (const fn of scrollers) fn();
   });
@@ -315,12 +310,8 @@ function init(root) {
     band.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') sfx.bar(i); });
     band.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') sfx.bar(i); });
   });
-  root.querySelectorAll('.wall .note').forEach((n) => n.addEventListener('pointerenter', (e) => {
-    if (e.pointerType === 'mouse') sfx.tick();
-  }));
 
   hero = root.querySelector('.hero');
-  tl = root.querySelector('.tl');
   scrollers = [];
   sizers = [];
   initDay(root);
