@@ -65,6 +65,8 @@ addEventListener('click', (e) => {
 const header = document.querySelector('.site-header');
 let hero = null;
 let tl = null;
+let scrollers = []; // per-page scroll effects, rebuilt by init() after each page swap
+let sizers = [];    // per-page measurements, rerun on resize
 let queued = false;
 function onScroll() {
   if (queued) return;
@@ -80,10 +82,86 @@ function onScroll() {
       const r = tl.getBoundingClientRect();
       tl.style.setProperty('--p', clamp01((innerHeight * 0.6 - r.top) / r.height).toFixed(3));
     }
+    for (const fn of scrollers) fn();
   });
 }
 addEventListener('scroll', onScroll, { passive: true });
-addEventListener('resize', onScroll, { passive: true });
+addEventListener('resize', () => { sizers.forEach((fn) => fn()); onScroll(); }, { passive: true });
+
+/* Home, "Why parents choose us": one day at Tots. Scrolling down moves the day sideways,
+   the sky changes with the time of day and the sun crosses it. */
+const SKY = [['#fde3c8', '#fbf5ea'], ['#d9ebfb', '#f6f1e7'], ['#c4e0f8', '#eef5fb'], ['#fde9b8', '#fbf5ea'], ['#f8cdbf', '#fbe6dc'], ['#1d1930', '#3a2f66']]; // paper-tinted skies, top to bottom; night uses the site ink
+function initDay(root) {
+  const pin = root.querySelector('[data-day] .day-pin');
+  if (!pin) return;
+  const stage = pin.querySelector('.day-stage');
+  const track = pin.querySelector('.day-track');
+  const sun = pin.querySelector('.day-sun');
+  const panels = [...track.children];
+  const stops = [...pin.querySelectorAll('.day-ruler li')];
+  const last = panels.length - 1;
+  let on = -1;
+  scrollers.push(() => {
+    const r = pin.getBoundingClientRect();
+    const p = clamp01(-r.top / (r.height - innerHeight));
+    track.style.transform = `translateX(${-p * (track.scrollWidth - innerWidth)}px)`;
+    stage.style.setProperty('--p', p.toFixed(4));
+    const night = clamp01((p - 0.82) / 0.14), arc = clamp01(p / 0.9);
+    stage.style.setProperty('--night', night.toFixed(3));
+    sun.style.left = `${8 + arc * 84}%`;
+    sun.style.top = `${66 - Math.sin(Math.PI * arc) * 50 + night * 34}%`;
+    const now = Math.round(p * last);
+    if (now === on) return;
+    on = now;
+    panels.forEach((el, i) => el.classList.toggle('on', i === on));
+    stops.forEach((el, i) => el.classList.toggle('done', i <= on));
+    stage.style.setProperty('--s1', SKY[on % SKY.length][0]);
+    stage.style.setProperty('--s2', SKY[on % SKY.length][1]);
+    stage.classList.toggle('is-night', on === last);
+  });
+}
+
+/* Our Story timeline: the years slide sideways as you scroll down (after landonorris.com).
+   Laid out at 900px tall and zoomed to the screen. Photos drift a little slower than their frames.
+   Under 768px it is a normal column, and years just light up as they come into view. */
+function initWalk(root) {
+  const sec = root.querySelector('[data-walk]');
+  if (!sec) return;
+  const track = sec.querySelector('.walk-track');
+  const inner = sec.querySelector('.walk-inner');
+  const chs = [...inner.children];
+  const pols = [...sec.querySelectorAll('.pol')];
+  const wide = matchMedia('(min-width: 768px)');
+  let travel = 0, zoom = 1;
+  const size = () => {
+    if (!wide.matches) { sec.style.height = ''; inner.style.zoom = ''; track.style.transform = ''; return; }
+    zoom = Math.max(0.6, innerHeight / 900);
+    inner.style.zoom = zoom.toFixed(4);
+    travel = track.getBoundingClientRect().width - innerWidth;
+    sec.style.height = `${Math.max(innerHeight, travel)}px`;
+  };
+  size();
+  sizers.push(size);
+  scrollers.push(() => {
+    if (!wide.matches) {
+      chs.forEach((c) => { if (c.getBoundingClientRect().top < innerHeight * 0.8) c.classList.add('in'); });
+      return;
+    }
+    const d = Math.min(Math.max(innerHeight - sec.getBoundingClientRect().top, 0), travel); // starts as the section rises in
+    track.style.transform = `translateX(${-d}px)`;
+    sec.style.setProperty('--d', d.toFixed(0));
+    const mid = innerWidth * 0.55;
+    for (const c of chs) {
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--f', clamp01((mid - r.left) / r.width).toFixed(3));
+      if (r.left < mid) c.classList.add('in');
+    }
+    if (!reduce) for (const el of pols) {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty('--k', clamp01((innerWidth - r.left) / (innerWidth + r.width)).toFixed(3));
+    }
+  });
+}
 
 /* Reveal on scroll + number counters */
 function count(el) {
@@ -146,6 +224,83 @@ if (menu) {
   });
 }
 
+/* Repeat short review lists so the sides of the carousel stay filled as it loops. */
+function initTestimonials(carousel) {
+  const stage = carousel.querySelector('.quote-grid');
+  const cards = [...stage.querySelectorAll('.quote')];
+  const reviewCount = cards.length;
+  if (!reviewCount) return;
+
+  const deckSize = Math.ceil(9 / reviewCount) * reviewCount;
+  for (let i = reviewCount; i < deckSize; i++) {
+    const copy = cards[i % reviewCount].cloneNode(true);
+    cards.push(copy);
+    stage.append(copy);
+  }
+
+  const controls = carousel.querySelector('.quote-controls');
+  const status = carousel.querySelector('[role="status"]');
+  const half = Math.floor(deckSize / 2);
+  let current = 0;
+  let swipeStart = null;
+  let ignoreCardClick = false;
+
+  const show = (index, announce = true) => {
+    current = (index + deckSize) % deckSize;
+    cards.forEach((card, i) => {
+      const position = (i - current + half + deckSize) % deckSize - half;
+      card.classList.toggle('quote-wrap', Math.abs(position - Number(card.dataset.position)) > half);
+      card.dataset.position = position;
+      card.style.setProperty('--quote-index', position);
+      card.toggleAttribute('data-odd', position % 2 !== 0);
+      card.setAttribute('aria-hidden', i !== current);
+    });
+
+    if (announce) {
+      const card = cards[current];
+      const name = card.querySelector('figcaption strong').textContent;
+      const quote = card.querySelector('blockquote').textContent;
+      status.textContent = `Testimonial from ${name}. ${quote}`;
+    }
+  };
+
+  controls.querySelectorAll('[data-quote-step]').forEach((button) => {
+    button.addEventListener('click', () => show(current + Number(button.dataset.quoteStep)));
+  });
+  controls.addEventListener('keydown', (event) => {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+    event.preventDefault();
+    show(current + (event.key === 'ArrowLeft' ? -1 : 1));
+  });
+  stage.addEventListener('click', (event) => {
+    const card = event.target.closest('.quote');
+    if (card && !ignoreCardClick && card !== cards[current]) show(cards.indexOf(card));
+  });
+  stage.addEventListener('pointerdown', (event) => {
+    ignoreCardClick = false;
+    if (event.pointerType === 'touch' && event.isPrimary) {
+      swipeStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+    }
+  });
+  stage.addEventListener('pointerup', (event) => {
+    if (swipeStart?.id !== event.pointerId) return;
+    const dx = event.clientX - swipeStart.x;
+    const dy = event.clientY - swipeStart.y;
+    swipeStart = null;
+    if (Math.abs(dx) < 48 || Math.abs(dx) <= Math.abs(dy)) return;
+    ignoreCardClick = true;
+    show(current + (dx < 0 ? 1 : -1));
+  });
+  stage.addEventListener('pointercancel', () => { swipeStart = null; });
+
+  show(0, false);
+  carousel.setAttribute('role', 'group');
+  carousel.setAttribute('aria-roledescription', 'carousel');
+  carousel.setAttribute('aria-label', 'Parent testimonials');
+  carousel.classList.add('is-ready');
+  controls.hidden = false;
+}
+
 /* Everything that lives inside a page. Runs on first load for the whole document,
    and again for the new <main> each time the page transition swaps one in. */
 function init(root) {
@@ -166,6 +321,10 @@ function init(root) {
 
   hero = root.querySelector('.hero');
   tl = root.querySelector('.tl');
+  scrollers = [];
+  sizers = [];
+  initDay(root);
+  initWalk(root);
   /* Hero depth: layers drift with the pointer (mouse/trackpad only) */
   if (hero && !reduce && matchMedia('(pointer: fine)').matches) {
     const h = hero;
@@ -205,6 +364,8 @@ function init(root) {
       });
     });
   });
+
+  root.querySelectorAll('[data-testimonials]').forEach(initTestimonials);
 
   /* Team carousel buttons */
   root.querySelectorAll('[data-scroll]').forEach((btn) => {
@@ -318,6 +479,8 @@ function init(root) {
   onScroll();
 }
 init(document);
+// Fonts change text widths, so re-measure the sideways sections once they arrive.
+document.fonts?.ready.then(() => { sizers.forEach((fn) => fn()); onScroll(); });
 
 /* Ribbon page transition (after cue146 on cuedesign.space).
    One document, no reload: a link click fetches the next page while five curved bands sweep up

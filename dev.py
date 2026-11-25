@@ -16,4 +16,6 @@ class H(http.server.SimpleHTTPRequestHandler):
             if self.command != "HEAD": self.wfile.write(body)
         else: super().send_error(code, *a, **k)
 
-http.server.ThreadingHTTPServer(("127.0.0.1", 4321), H).serve_forever()
+PORT = int(os.environ.get("PORT", 4321))  # PORT=4330 python3 dev.py if 4321 is busy
+print(f"Serving on http://127.0.0.1:{PORT}")
+http.server.ThreadingHTTPServer(("127.0.0.1", PORT), H).serve_forever()

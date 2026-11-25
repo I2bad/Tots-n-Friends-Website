@@ -22,9 +22,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&amp;family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&amp;family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"></noscript>
-<link rel="stylesheet" href="/styles.css?v=20261124-seo">
+<link rel="stylesheet" href="/styles.css?v=20261125-soft">
 <script>document.documentElement.classList.add('js')</script>
-<script src="main.js" defer></script>
+<script src="main.js?v=20261125-soft" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -313,54 +313,88 @@
   </section>
 
   <!-- ============ BELIEFS: classroom pin-board ============ -->
-  <section class="section beliefs" id="values" aria-labelledby="values-title">
+  <section class="section day" id="values" aria-labelledby="values-title" data-day>
     <div class="wrap">
       <div class="section-head" data-reveal>
         <h2 id="values-title">Why parents <em class="accent">choose</em> us.</h2>
-        <p class="lede">Six things we believe, one for each colour in our rainbow. Next to each one is someone who sees it happen: a teacher, a parent, or a day on our calendar.</p>
+        <p class="lede">Follow one day at Tots, from drop-off to the big days. Each part of the day shows one thing we believe, with someone who sees it happen.</p>
       </div>
-      <ul class="wall">
-        <li class="note note--lined" style="--c:var(--red);--c-d:var(--red-d);--r:-2.5deg" data-reveal>
-          <p class="note-band"><span class="mark" aria-hidden="true"></span>Kindness</p>
-          <h3>We teach kindness on purpose.</h3>
-          <p>Caring about other people is a skill. Children practise it here every day, the same way they practise letters and numbers.</p>
-          <figure class="proof"><blockquote>“At Tots, I love chatting with the children, listening to their stories, and watching them grow in confidence.”</blockquote><figcaption>Principal Janet</figcaption></figure>
-        </li>
-        <li class="note note--sticky" style="--c:var(--orange);--c-d:var(--orange-d);--r:2deg;--rd:.08s" data-reveal>
-          <p class="note-band"><span class="mark" aria-hidden="true"></span>Curiosity</p>
-          <h3>No question is too small.</h3>
-          <p>Why is the sky blue? Where do ants sleep? Every question gets a proper answer, or a way to go and find one.</p>
-          <figure class="proof"><blockquote>“I create spaces where curiosity is always encouraged and no question is too small.”</blockquote><figcaption>Teacher Yong</figcaption></figure>
-        </li>
-        <li class="note note--card" style="--c:var(--yellow);--c-d:var(--gold-d);--r:-1deg;--rd:.16s" data-reveal>
-          <p class="note-band"><span class="mark" aria-hidden="true"></span>Joy</p>
-          <h3>Messy is allowed.</h3>
-          <p>Art, music, movement and pretend play happen every day. On Thursdays, from 5:15 to 6:30pm, we go further:</p>
-          <ul class="tags"><li>Cooking</li><li>Painting</li><li>Messy play</li><li>Science</li></ul>
-          <figure class="proof"><blockquote>“There are only joyful memories when he talks about school.”</blockquote><figcaption>Yui Wenjia, parent of Ee Chen</figcaption></figure>
-        </li>
-        <li class="note note--fold" style="--c:var(--green);--c-d:var(--green-d);--r:1.5deg" data-reveal>
-          <p class="note-band"><span class="mark" aria-hidden="true"></span>Growth</p>
-          <h3>Every child grows at their own pace.</h3>
-          <p>We don't rush anyone to keep up with a chart. We help children try new things, pick themselves up when it goes wrong, and see how far they've come.</p>
-          <figure class="proof"><blockquote>“He has learned and improved so much within just 3 months.”</blockquote><figcaption>Racheal Chua, parent of Jing Qian</figcaption></figure>
-        </li>
-        <li class="note note--sky" style="--c:var(--blue);--c-d:var(--blue-d);--r:-2deg;--rd:.08s" data-reveal>
-          <p class="note-band"><span class="mark" aria-hidden="true"></span>Trust</p>
-          <h3>You'll always know how their day went.</h3>
-          <p>You hand us your child every morning, and we take that seriously. The centre has CCTV, and during the day updates come straight to your phone on Oodlin.</p>
-          <div class="ping" aria-hidden="true"><img src="images/oodlin-logo.jpg" alt="" width="512" height="512" loading="lazy"><span><strong>Nap ended, all smiles</strong>13:45 · Dreamroom</span></div>
-          <figure class="proof"><blockquote>“I am here to make sure every child feels comfortable and happy from the moment they arrive.”</blockquote><figcaption>Assistant Kala</figcaption></figure>
-        </li>
-        <li class="note note--ticket" style="--c:var(--purple);--c-d:var(--purple-d);--r:2.5deg;--rd:.16s" data-reveal>
-          <div class="ticket">
+    </div>
+    <div class="day-pin">
+      <div class="day-stage">
+        <div class="day-glow" aria-hidden="true"></div>
+        <svg class="day-rainbow" viewBox="0 0 1200 620" aria-hidden="true"><path d="M 26 620 A 574 574 0 0 1 1174 620" fill="none" stroke="var(--red)" stroke-width="32"/><path d="M 58 620 A 542 542 0 0 1 1142 620" fill="none" stroke="var(--orange)" stroke-width="32"/><path d="M 90 620 A 510 510 0 0 1 1110 620" fill="none" stroke="var(--yellow)" stroke-width="32"/><path d="M 122 620 A 478 478 0 0 1 1078 620" fill="none" stroke="var(--green)" stroke-width="32"/><path d="M 154 620 A 446 446 0 0 1 1046 620" fill="none" stroke="var(--blue)" stroke-width="32"/><path d="M 186 620 A 414 414 0 0 1 1014 620" fill="none" stroke="var(--purple)" stroke-width="32"/></svg>
+        <div class="day-sparks" aria-hidden="true"><svg class="day-spark" style="left:10%;top:16%;--s:24px;--t:0s;color:var(--yellow)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:24%;top:32%;--s:14px;--t:0.7s;color:var(--pink)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:38%;top:9%;--s:20px;--t:1.3s;color:var(--yellow)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:55%;top:24%;--s:12px;--t:0.4s;color:var(--cream)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:68%;top:11%;--s:26px;--t:1s;color:var(--yellow)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:84%;top:28%;--s:16px;--t:1.6s;color:var(--pink)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:92%;top:13%;--s:12px;--t:0.5s;color:var(--cream)" aria-hidden="true"><use href="#i-star"/></svg><svg class="day-spark" style="left:46%;top:38%;--s:10px;--t:1.1s;color:var(--yellow)" aria-hidden="true"><use href="#i-star"/></svg></div>
+        <div class="day-moon" aria-hidden="true"></div>
+        <div class="day-sun" aria-hidden="true"></div>
+        <div class="day-cloud" style="top:12%;left:60%;--speed:-28vw;--w:200px" aria-hidden="true"><svg viewBox="-24 520 276 140"><g fill="#eadfca" transform="translate(0 9)"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g><g fill="#fffdf8"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g></svg></div><div class="day-cloud" style="top:24%;left:14%;--speed:-50vw;--w:140px" aria-hidden="true"><svg viewBox="-24 520 276 140"><g fill="#eadfca" transform="translate(0 9)"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g><g fill="#fffdf8"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g></svg></div><div class="day-cloud" style="top:7%;left:104%;--speed:-75vw;--w:170px" aria-hidden="true"><svg viewBox="-24 520 276 140"><g fill="#eadfca" transform="translate(0 9)"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g><g fill="#fffdf8"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g></svg></div><div class="day-cloud" style="top:30%;left:140%;--speed:-95vw;--w:120px" aria-hidden="true"><svg viewBox="-24 520 276 140"><g fill="#eadfca" transform="translate(0 9)"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g><g fill="#fffdf8"><circle cx="40" cy="612" r="40"/><circle cx="94" cy="586" r="58"/><circle cx="154" cy="600" r="48"/><circle cx="200" cy="624" r="34"/><rect x="-20" y="608" width="250" height="44" rx="22"/></g></svg></div>
+        <div class="day-layer day-far" aria-hidden="true"><svg viewBox="0 0 2400 400" preserveAspectRatio="none"><path d="M-10 210 C200 120 380 130 560 190 S940 90 1180 150 S1600 210 1820 140 S2200 100 2410 170 V410 H-10Z" fill="#e0eccb"/></svg></div>
+        <div class="day-layer day-mid" aria-hidden="true"><span class="day-prop day-house" style="left:14%;--h:46%"><svg viewBox="0 0 140 150"><path d="M38 40 a32 32 0 0 1 64 0" fill="none" stroke="var(--red)" stroke-width="7"/><path d="M45 40 a25 25 0 0 1 50 0" fill="none" stroke="var(--yellow)" stroke-width="7"/><path d="M52 40 a18 18 0 0 1 36 0" fill="none" stroke="var(--blue)" stroke-width="7"/><rect x="24" y="78" width="92" height="72" fill="#fffdf8"/><rect x="92" y="78" width="24" height="72" fill="#f3e9d8"/><path d="M14 82 L70 42 L126 82 Z" fill="var(--orange)"/><rect x="58" y="108" width="24" height="42" rx="12" fill="var(--purple)"/><rect x="34" y="94" width="18" height="18" rx="9" fill="#d9ebfb"/><rect x="88" y="94" width="18" height="18" rx="9" fill="#d9ebfb"/><rect class="lit" x="34" y="94" width="18" height="18" rx="9" fill="var(--yellow)"/><rect class="lit" x="88" y="94" width="18" height="18" rx="9" fill="var(--yellow)"/></svg></span><span class="day-prop" style="left:6%;--h:34%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#9bd3a0"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#7fc289"/></svg></span><span class="day-prop" style="left:31%;--h:40%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#7cc58c"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#5fb174"/></svg></span><span class="day-prop" style="left:36%;--h:30%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#f7c548"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#eab42f"/></svg></span><span class="day-prop" style="left:58%;--h:38%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#9bd3a0"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#7fc289"/></svg></span><span class="day-prop" style="left:74%;--h:32%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#7cc58c"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#5fb174"/></svg></span><span class="day-prop" style="left:88%;--h:42%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#f39237"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#e07d22"/></svg></span><svg viewBox="0 0 2400 400" preserveAspectRatio="none"><path d="M-10 190 C220 110 420 150 640 170 S1020 90 1280 140 S1720 190 1960 130 S2280 120 2410 160 V410 H-10Z" fill="#bfdfb2"/></svg></div>
+        <div class="day-layer day-near" aria-hidden="true"><span class="day-prop" style="left:22%;--h:60%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#4fae67"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#3f9a57"/></svg></span><span class="day-prop" style="left:48%;--h:52%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#7cc58c"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#5fb174"/></svg></span><span class="day-prop" style="left:70%;--h:64%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#4fae67"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#3f9a57"/></svg></span><span class="day-prop" style="left:94%;--h:56%"><svg viewBox="0 0 60 110"><rect x="26" y="56" width="8" height="54" rx="4" fill="#c49a6c"/><path d="M4 70 V32 a26 26 0 0 1 52 0 V70 Z" fill="#7cc58c"/><path d="M30 70 V6 a26 26 0 0 1 26 26 V70 Z" fill="#5fb174"/></svg></span><svg viewBox="0 0 2400 400" preserveAspectRatio="none"><path d="M-10 150 C260 70 500 120 760 110 S1240 50 1500 100 S1980 140 2410 80 V410 H-10Z" fill="#8fcb93"/></svg></div>
+        <div class="day-track">
+        <article class="day-panel" style="--c:var(--blue);--c-d:var(--blue-d)">
+          <figure class="day-photo" style="--rot:-3deg"><img src="images/program-toddler-class.jpeg" alt="Toddler class activity at our taska in Jenjarom" width="960" height="1280" loading="lazy"><figcaption>Drop-off</figcaption></figure>
+          <div class="day-card">
+            <p class="day-time">Drop-off</p>
+            <p class="note-band"><span class="mark" aria-hidden="true"></span>Trust</p>
+            <h3>You'll always know how their day went.</h3>
+            <p>You hand us your child every morning, and we take that seriously. The centre has CCTV, and during the day updates come straight to your phone on Oodlin.</p>
+            <div class="ping" aria-hidden="true"><img src="images/oodlin-logo.jpg" alt="" width="512" height="512" loading="lazy"><span><strong>Nap ended, all smiles</strong>13:45 · Dreamroom</span></div><figure class="day-say"><blockquote>I am here to make sure every child feels comfortable and happy from the moment they arrive.</blockquote><figcaption>Assistant Kala</figcaption></figure>
+          </div>
+        </article>
+        <article class="day-panel" style="--c:var(--red);--c-d:var(--red-d)">
+          <figure class="day-photo" style="--rot:3deg"><img src="images/BTA-timeline2.webp" alt="Little ones exploring a tray of water beads together" width="810" height="1080" loading="lazy"><figcaption>Morning circle</figcaption></figure>
+          <div class="day-card">
+            <p class="day-time">Morning circle</p>
+            <p class="note-band"><span class="mark" aria-hidden="true"></span>Kindness</p>
+            <h3>We teach kindness on purpose.</h3>
+            <p>Caring about other people is a skill. Children practise it here every day, the same way they practise letters and numbers.</p>
+            <figure class="day-say"><blockquote>At Tots, I love chatting with the children, listening to their stories, and watching them grow in confidence.</blockquote><figcaption>Principal Janet</figcaption></figure>
+          </div>
+        </article>
+        <article class="day-panel" style="--c:var(--orange);--c-d:var(--orange-d)">
+          <figure class="day-photo" style="--rot:-3deg"><img src="images/LTP-timeline2.webp" alt="Small hands drawing in a tray of coloured sand" width="810" height="1080" loading="lazy"><figcaption>Mid-morning</figcaption></figure>
+          <div class="day-card">
+            <p class="day-time">Mid-morning</p>
+            <p class="note-band"><span class="mark" aria-hidden="true"></span>Curiosity</p>
+            <h3>No question is too small.</h3>
+            <p>Why is the sky blue? Where do ants sleep? Every question gets a proper answer, or a way to go and find one.</p>
+            <figure class="day-say"><blockquote>I create spaces where curiosity is always encouraged and no question is too small.</blockquote><figcaption>Teacher Yong</figcaption></figure>
+          </div>
+        </article>
+        <article class="day-panel" style="--c:var(--green);--c-d:var(--green-d)">
+          <figure class="day-photo" style="--rot:3deg"><img src="images/LTP-timeline3.webp" alt="A child arranging wooden letter blocks" width="960" height="1280" loading="lazy"><figcaption>Afternoon</figcaption></figure>
+          <div class="day-card">
+            <p class="day-time">Afternoon</p>
+            <p class="note-band"><span class="mark" aria-hidden="true"></span>Growth</p>
+            <h3>Every child grows at their own pace.</h3>
+            <p>We don't rush anyone to keep up with a chart. We help children try new things, pick themselves up when it goes wrong, and see how far they've come.</p>
+            <figure class="day-say"><blockquote>He has learned and improved so much within just 3 months.</blockquote><figcaption>Racheal Chua, parent of Jing Qian</figcaption></figure>
+          </div>
+        </article>
+        <article class="day-panel" style="--c:var(--yellow);--c-d:var(--gold-d)">
+          <figure class="day-photo" style="--rot:-3deg"><img src="images/hero-enrichment.webp" alt="A child in a clown nose and rainbow wig at enrichment class" width="480" height="640" loading="lazy"><figcaption>Thursday, 5:15pm</figcaption></figure>
+          <div class="day-card">
+            <p class="day-time">Thursday, 5:15pm</p>
+            <p class="note-band"><span class="mark" aria-hidden="true"></span>Joy</p>
+            <h3>Messy is allowed.</h3>
+            <p>Art, music, movement and pretend play happen every day. On Thursdays, from 5:15 to 6:30pm, we go further: cooking, painting, messy play and science.</p>
+            <figure class="day-say"><blockquote>There are only joyful memories when he talks about school.</blockquote><figcaption>Yui Wenjia, parent of Ee Chen</figcaption></figure>
+          </div>
+        </article>
+        <article class="day-panel" style="--c:var(--purple);--c-d:var(--purple-d)">
+          <figure class="day-photo" style="--rot:3deg"><img src="images/hero-infant-care.webp" alt="Two little ones in traditional outfits pulling silly faces" width="480" height="640" loading="lazy"><figcaption>The big days</figcaption></figure>
+          <div class="day-card">
+            <p class="day-time">The big days</p>
             <p class="note-band"><span class="mark" aria-hidden="true"></span>Belonging</p>
             <h3>Every family belongs here.</h3>
-            <p>Every child and every family is welcome. We celebrate our differences, and we do it together.</p>
-            <p class="stub"><strong>Family Day &amp; Sports Day, 2025</strong>With our friends from Tadika Pelita Ilmuku, at the SJC Jenjarom basketball court.</p>
+            <p>Every child and every family is welcome. We celebrate our differences, and we do it together, like at Family Day and Sports Day 2025 with our friends from Tadika Pelita Ilmuku.</p>
+            
           </div>
-        </li>
-      </ul>
+        </article>
+        </div>
+        <ol class="day-ruler" aria-hidden="true"><li style="--c:var(--blue)"><span>Drop-off</span></li><li style="--c:var(--red)"><span>Morning circle</span></li><li style="--c:var(--orange)"><span>Mid-morning</span></li><li style="--c:var(--green)"><span>Afternoon</span></li><li style="--c:var(--yellow)"><span>Thursday, 5:15pm</span></li><li style="--c:var(--purple)"><span>The big days</span></li></ol>
+      </div>
     </div>
   </section>
 
@@ -370,23 +404,33 @@
       <div class="section-head center" data-reveal>
         <h2 id="voices-title">Straight from parents' WhatsApp</h2>
       </div>
-      <div class="quote-grid">
-        <figure class="quote" style="--c:var(--red)" data-reveal>
+    </div>
+    <div class="quote-carousel" data-testimonials>
+      <div class="quote-grid" id="parent-quotes">
+        <figure class="quote" style="--c:var(--red)">
+          <span class="avatar" aria-hidden="true">K</span>
           <blockquote>Dear teachers, thank you so much for being so passionate about teaching young children. I cannot thank you enough for your influence on my child's growth and success. Thank you so much for taking such good care of Khavinaya all this while!</blockquote>
-          <figcaption><span class="avatar">K</span><span><strong>Khavinaya's Mum</strong><span>Parent · via WhatsApp</span></span></figcaption>
+          <figcaption><strong>Khavinaya's Mum</strong><span class="role">Parent · via WhatsApp</span></figcaption>
         </figure>
-        <figure class="quote" style="--c:var(--blue);--rd:.1s" data-reveal>
+        <figure class="quote" style="--c:var(--blue)">
+          <span class="avatar" aria-hidden="true">Y</span>
           <blockquote>A big thank you to all the teachers and assistants for taking such good care of Ee Chen in his preschool journey. There are only joyful memories when he talks about school — not once does he complain about anything. You guys have been doing a really good job! Keep up the great work.</blockquote>
-          <figcaption><span class="avatar">Y</span><span><strong>Yui Wenjia</strong><span>Parent of Ee Chen · via WhatsApp</span></span></figcaption>
+          <figcaption><strong>Yui Wenjia</strong><span class="role">Parent of Ee Chen · via WhatsApp</span></figcaption>
         </figure>
-        <figure class="quote" style="--c:var(--green);--rd:.2s" data-reveal>
+        <figure class="quote" style="--c:var(--green)">
+          <span class="avatar" aria-hidden="true">R</span>
           <blockquote>I am so grateful that Tots &amp; Friends allowed Jing Qian to rejoin the class. He has learned and improved so much within just 3 months. I couldn't imagine what it would be like if I had kept him at home without schooling. The teachers here truly make a difference.</blockquote>
-          <figcaption><span class="avatar">R</span><span><strong>Racheal Chua</strong><span>Parent of Jing Qian · via WhatsApp</span></span></figcaption>
+          <figcaption><strong>Racheal Chua</strong><span class="role">Parent of Jing Qian · via WhatsApp</span></figcaption>
         </figure>
       </div>
-      <div class="voices-cta" data-reveal>
-        <a class="btn btn-primary" href="https://wa.me/60173078621?text=Hi!%20I%27d%20like%20to%20book%20a%20visit%20to%20Tots%20%26%20Friends%20Childcare%20Centre."><svg class="i"><use href="#i-wa"/></svg>Book a visit</a>
+      <div class="quote-controls" hidden>
+        <button type="button" class="round-btn" data-quote-step="-1" aria-controls="parent-quotes" aria-label="Previous testimonial"><svg class="i" aria-hidden="true"><use href="#i-chev-l"/></svg></button>
+        <button type="button" class="round-btn" data-quote-step="1" aria-controls="parent-quotes" aria-label="Next testimonial"><svg class="i" aria-hidden="true"><use href="#i-chev-r"/></svg></button>
       </div>
+      <p class="sr" role="status" aria-atomic="true"></p>
+    </div>
+    <div class="wrap voices-cta" data-reveal>
+      <a class="btn btn-primary" href="https://wa.me/60173078621?text=Hi!%20I%27d%20like%20to%20book%20a%20visit%20to%20Tots%20%26%20Friends%20Childcare%20Centre."><svg class="i"><use href="#i-wa"/></svg>Book a visit</a>
     </div>
   </section>
 
@@ -408,7 +452,6 @@
       <li class="member" style="--c:var(--green)"><div class="member-photo arch"><img src="images/team-teacher-yong.jpg" alt="Teacher Yong" width="600" height="900" loading="lazy"></div><h3>Teacher Yong</h3><p>“Children learn through doing, exploring, and sometimes making a beautiful mess. I create spaces where curiosity is always encouraged and no question is too small.”</p></li>
       <li class="member" style="--c:var(--blue)"><div class="member-photo arch"><img src="images/team-teacher-xinhui.jpg" alt="Teacher Xin Hui" width="600" height="900" loading="lazy"></div><h3>Teacher Xin Hui</h3><p>“I enjoy quiet moments to relax and recharge. At Tots, what I value most is the teamwork, open communication, and the time I get to spend with the children.”</p></li>
       <li class="member" style="--c:var(--purple)"><div class="member-photo arch"><img src="images/team-teacher-syamila.jpg" alt="Teacher Syamila" width="600" height="900" loading="lazy"></div><h3>Teacher Syamila</h3><p>“I'm grateful for the opportunity to not only care for children but to actively contribute to their learning and growth. The teamwork, guidance, and positive atmosphere here make teaching at Tots a truly meaningful experience.”</p></li>
-      <li class="member" style="--c:var(--pink)"><div class="member-photo arch"><img src="images/team-teacher-lethu.jpg" alt="Teacher Lethu" width="600" height="900" loading="lazy"></div><h3>Teacher Lethu</h3><p>“My greatest joy is my own children — I've cherished every moment of watching them grow. At Tots, I love working with the kids and enjoying their little quirks. I'm still learning about early childhood education every day, and I'm grateful to our Principal for this opportunity.”</p></li>
       <li class="member" style="--c:var(--red)"><div class="member-photo arch"><img src="images/team-assistant-kala.jpg" alt="Assistant Kala" width="600" height="900" loading="lazy"></div><h3>Assistant Kala</h3><p>“I am here to make sure every child feels comfortable and happy from the moment they arrive. A settled, content child is a child who is ready to learn and explore.”</p></li>
     </ul>
   </section>
