@@ -22,9 +22,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&amp;family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&amp;family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..800,0..100,0..1&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap"></noscript>
-<link rel="stylesheet" href="/styles.css?v=20261125-polish">
+<link rel="stylesheet" href="/styles.css?v=20261125-page-menu">
 <script>document.documentElement.classList.add('js')</script>
-<script src="main.js?v=20261125-polish" defer></script>
+<script src="main.js?v=20261125-page-menu" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -46,14 +46,14 @@
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-12a7 7 0 0 1 14 0c0 5.8-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></symbol>
   <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
   <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+  <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+  <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
   <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3c.6 4.6 2.4 6.4 7 7-4.6.6-6.4 2.4-7 7-.6-4.6-2.4-6.4-7-7 4.6-.6 6.4-2.4 7-7z"/></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M12 0c1 7.2 4.8 11 12 12-7.2 1-11 4.8-12 12-1-7.2-4.8-11-12-12 7.2-1 11-4.8 12-12z"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-  <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
-  <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="m16 9 5 6M21 9l-5 6"/></symbol>
   <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol>
   <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
   <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H7.9v3h2.6V21z"/></symbol>
@@ -64,40 +64,56 @@
 
 <header class="site-header">
   <div class="wrap nav">
-    <a class="brand" href="/"><img src="images/logo.webp" alt="Tots &amp; Friends Childcare Centre — home" width="240" height="150"></a>
-    <nav aria-label="Main">
+    <a class="brand" href="/"><img src="/images/logo.webp" alt="Tots &amp; Friends Childcare Centre — home" width="240" height="150"></a>
+    <nav class="desktop-nav" aria-label="Main">
       <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="/philosophy">Why Play Matters</a></li>
-        <li><a href="/timeline">Our Story</a></li>
-        <li><a href="/contact">Visit &amp; Enrol</a></li>
+        <li><a class="nav-link nav-link--home" href="/">Home</a></li>
+        <li><a class="nav-link nav-link--programmes" href="/programmes">Programmes</a></li>
+        <li>
+          <details class="nav-group nav-group--parents" name="desktop-nav">
+            <summary class="nav-link">For Parents</summary>
+            <ul class="nav-panel">
+              <li><a href="/philosophy"><strong>Why Play Matters</strong><span>How children learn through play</span></a></li>
+              <li><a href="/progress" aria-current="page"><strong>Progress Check</strong><span>For toddlers aged 2–3</span></a></li>
+            </ul>
+          </details>
+        </li>
+        <li><a class="nav-link nav-link--story" href="/timeline">Our Story</a></li>
+        <li><a class="nav-link nav-link--visit" href="/contact">Visit &amp; Enrol</a></li>
       </ul>
     </nav>
     <div class="nav-end">
-      <button class="sound-btn" type="button" data-sound aria-pressed="false" aria-label="Sound effects"><svg class="i on"><use href="#i-sound-on"/></svg><svg class="i off"><use href="#i-sound-off"/></svg><span aria-hidden="true">Sound</span></button>
+      <button class="sound-btn" type="button" data-sound aria-pressed="false" aria-label="Sound"><svg class="i sound-on" aria-hidden="true"><use href="#i-sound-on"/></svg><svg class="i sound-off" aria-hidden="true"><use href="#i-sound-off"/></svg><span class="sound-label">Sound</span></button>
       <a class="btn btn-primary btn-sm nav-cta" href="/contact">Book a visit</a>
-      <button class="menu-btn" popovertarget="menu" aria-label="Open menu"><svg class="i bars" viewBox="0 0 24 24" aria-hidden="true"><path class="b1" d="M4 7h16"/><path class="b2" d="M4 12h16"/><path class="b3" d="M4 17h16" pathLength="1"/></svg></button>
+      <button class="menu-btn" type="button" popovertarget="menu" aria-label="Menu"><svg class="i" aria-hidden="true"><use href="#i-menu"/></svg></button>
     </div>
   </div>
 </header>
 
 <div id="menu" popover role="dialog" aria-modal="true" aria-label="Mobile menu">
-  <div class="menu-wipe" aria-hidden="true"><i></i></div>
   <div class="menu-top">
-    <img src="images/logo.webp" alt="" width="240" height="150">
-    <button class="menu-btn menu-close" type="button" autofocus popovertarget="menu" popovertargetaction="hide" aria-label="Close menu"><svg class="i bars" viewBox="0 0 24 24" aria-hidden="true"><path class="b1" d="M4 7h16"/><path class="b2" d="M4 12h16"/><path class="b3" d="M4 17h16" pathLength="1"/></svg></button>
+    <button class="menu-back" type="button" hidden>Back</button>
+    <button class="menu-btn menu-close" type="button" autofocus popovertarget="menu" popovertargetaction="hide" aria-label="Close"><svg class="i" aria-hidden="true"><use href="#i-close"/></svg></button>
   </div>
-  <nav aria-label="Mobile">
-    <ol class="menu-links">
-      <li><a href="/" style="--c:var(--red-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Home</span></span></a></li>
-      <li><a href="/philosophy" style="--c:var(--orange-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Why Play Matters</span></span></a></li>
-      <li><a href="/timeline" style="--c:var(--green-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Our Story</span></span></a></li>
-      <li><a href="/contact" style="--c:var(--blue-d)"><span class="mark" aria-hidden="true"></span><span class="menu-label"><span>Visit &amp; Enrol</span></span></a></li>
-    </ol>
+  <nav aria-label="Main">
+    <ul class="menu-links" id="menu-root">
+      <li><a class="nav-link nav-link--home" href="/">Home</a></li>
+      <li><a class="nav-link nav-link--programmes" href="/programmes">Programmes</a></li>
+      <li><button class="nav-link nav-group--parents" type="button" data-menu-topic aria-controls="menu-parents">For Parents</button></li>
+      <li><a class="nav-link nav-link--story" href="/timeline">Our Story</a></li>
+      <li><a class="nav-link nav-link--visit" href="/contact">Visit &amp; Enrol</a></li>
+    </ul>
+    <section class="menu-topic nav-group nav-group--parents" id="menu-parents" aria-labelledby="menu-title-parents" hidden>
+      <h2 id="menu-title-parents">For Parents</h2>
+      <ul class="nav-panel">
+        <li><a href="/philosophy"><strong>Why Play Matters</strong><span>How children learn through play</span></a></li>
+        <li><a href="/progress" aria-current="page"><strong>Progress Check</strong><span>For toddlers aged 2–3</span></a></li>
+      </ul>
+    </section>
   </nav>
   <div class="menu-foot">
-    <a class="btn btn-wa" href="https://wa.me/60173078621?text=Hi!%20I%27d%20like%20to%20enquire%20about%20enrolment%20at%20Tots%20%26%20Friends%20Childcare%20Centre."><svg class="i"><use href="#i-wa"/></svg>Chat on WhatsApp</a>
-    <p>+60 17-307 8621 · Mon–Fri, 8am–6pm</p>
+    <a class="btn btn-primary btn-sm nav-cta" href="/contact">Book a visit</a>
+    <button class="sound-btn" type="button" data-sound aria-pressed="false" aria-label="Sound"><svg class="i sound-on" aria-hidden="true"><use href="#i-sound-on"/></svg><svg class="i sound-off" aria-hidden="true"><use href="#i-sound-off"/></svg><span class="sound-label">Sound</span></button>
   </div>
 </div>
 

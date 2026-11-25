@@ -54,7 +54,7 @@ function setSound(on) {
 }
 
 addEventListener('click', (e) => {
-  const el = e.target.closest?.('.btn, .round-btn, .menu-btn, .prog-tab, .flip-btn, .nav-links a, .menu-links a, summary');
+  const el = e.target.closest?.('.btn, .round-btn, .menu-btn, .menu-back, .prog-tab, .flip-btn, .nav-links a, #menu nav :is(a, button), summary');
   if (!el || el.matches('[data-sound]')) return;
   if (el.matches('.flip-btn')) sfx.flip();
   else if (el.matches('.prog-tab')) sfx.blip([...el.parentElement.children].indexOf(el) + 1);
@@ -63,6 +63,58 @@ addEventListener('click', (e) => {
 
 /* Header state, hero scroll depth and per-page scroll effects: one rAF-throttled scroll handler */
 const header = document.querySelector('.site-header');
+const desktopNav = header?.querySelector('.desktop-nav');
+const mobileNav = matchMedia('(max-width: 920px)');
+const openDesktopGroup = () => desktopNav?.querySelector('.nav-group[open]');
+const modifiedClick = (event) => event.metaKey || event.ctrlKey || event.altKey || event.shiftKey;
+
+if (desktopNav) {
+  let hoverClose;
+  for (const group of desktopNav.querySelectorAll('.nav-group')) {
+    group.addEventListener('pointerenter', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      clearTimeout(hoverClose);
+      const active = openDesktopGroup();
+      if (active !== group && active?.querySelector('.nav-panel :focus-visible')) return;
+      group.open = true;
+    });
+    group.addEventListener('pointerleave', (event) => {
+      if (event.pointerType !== 'mouse' || !group.open) return;
+      clearTimeout(hoverClose);
+      hoverClose = setTimeout(() => {
+        if (!group.querySelector(':focus-visible')) group.open = false;
+      }, 110);
+    });
+    group.querySelector('summary').addEventListener('click', (event) => {
+      if (event.pointerType === 'mouse' && group.open) event.preventDefault();
+    });
+  }
+  desktopNav.addEventListener('focusout', ({ target, relatedTarget }) => {
+    const group = target.closest('.nav-group[open]');
+    if (group && relatedTarget && !group.contains(relatedTarget)) group.open = false;
+  });
+  document.addEventListener('click', (event) => {
+    const group = openDesktopGroup();
+    if (group && (!group.contains(event.target) || (event.target.closest('a') && !modifiedClick(event)))) {
+      group.open = false;
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    const group = openDesktopGroup();
+    if (!group) return;
+    event.preventDefault();
+    clearTimeout(hoverClose);
+    if (group.contains(document.activeElement)) group.querySelector('summary').focus();
+    group.open = false;
+  });
+  mobileNav.addEventListener('change', ({ matches }) => {
+    if (!matches) return;
+    clearTimeout(hoverClose);
+    openDesktopGroup()?.removeAttribute('open');
+  });
+}
+
 let hero = null;
 let scrollers = []; // per-page scroll effects, rebuilt by init() after each page swap
 let sizers = [];    // per-page measurements, rerun on resize
@@ -183,12 +235,71 @@ const io = new IntersectionObserver((entries) => {
   }
 }, { rootMargin: '0px 0px -12% 0px' });
 
-/* The full-screen popover keeps keyboard and screen-reader focus inside the mobile menu. */
+/* The drawer replaces the main list with one topic and keeps focus inside. */
 const menu = document.getElementById('menu');
 if (menu) {
+  const drawerNav = menu.querySelector('nav');
+  const menuRoot = menu.querySelector('#menu-root');
+  const menuBack = menu.querySelector('.menu-back');
   const controls = [...menu.querySelectorAll('button, a[href]')];
-  const mobileNav = matchMedia('(max-width: 920px)');
+  let activeTopic = null;
+  let activeButton = null;
+  let drawerResize;
+  let screenReveal;
   let locked = [];
+
+  function changeScreen(screen, distance, show) {
+    if (reduce) {
+      show();
+      return;
+    }
+
+    // Measure the current height before a tap can interrupt an in-flight transition.
+    const from = drawerNav.offsetHeight;
+    drawerResize?.cancel();
+    screenReveal?.cancel();
+    show();
+    const to = drawerNav.offsetHeight;
+    const timing = { duration: 240, easing: 'cubic-bezier(.2, .7, .25, 1)' };
+    if (from !== to) {
+      drawerResize = drawerNav.animate([{ height: `${from}px` }, { height: `${to}px` }], timing);
+    }
+    screenReveal = screen.animate([
+      { opacity: .4, transform: `translateX(${distance}px)` },
+      { opacity: 1, transform: 'translateX(0)' },
+    ], timing);
+  }
+
+  function showMainMenu() {
+    if (!activeTopic) return;
+    activeTopic.hidden = true;
+    menuRoot.hidden = false;
+    menuBack.hidden = true;
+    drawerNav.scrollTop = 0;
+    activeTopic = null;
+    activeButton = null;
+  }
+
+  for (const button of menuRoot.querySelectorAll('[data-menu-topic]')) {
+    const topic = document.getElementById(button.getAttribute('aria-controls'));
+    button.addEventListener('click', () => {
+      changeScreen(topic, 14, () => {
+        activeTopic = topic;
+        activeButton = button;
+        menuRoot.hidden = true;
+        topic.hidden = false;
+        menuBack.hidden = false;
+        drawerNav.scrollTop = 0;
+      });
+      menuBack.focus({ preventScroll: true });
+    });
+  }
+  menuBack.addEventListener('click', () => {
+    const button = activeButton;
+    changeScreen(menuRoot, -14, showMainMenu);
+    button?.focus({ preventScroll: true });
+  });
+
   menu.addEventListener('toggle', () => {
     if (!menu.matches(':popover-open')) return;
     locked = [...document.body.children].filter((el) => el !== menu && !el.inert &&
@@ -196,13 +307,19 @@ if (menu) {
     locked.forEach((el) => { el.inert = true; });
   });
   menu.addEventListener('beforetoggle', ({ newState }) => {
-    if (newState !== 'closed') return;
+    if (newState === 'open') {
+      drawerResize?.cancel();
+      screenReveal?.cancel();
+      showMainMenu();
+      return;
+    }
     locked.forEach((el) => { el.inert = false; });
     locked = [];
   });
   menu.addEventListener('keydown', (event) => {
     if (event.key !== 'Tab') return;
-    const first = controls[0], last = controls[controls.length - 1];
+    const visible = controls.filter((control) => !control.closest('[hidden]'));
+    const first = visible[0], last = visible[visible.length - 1];
     if (event.shiftKey && document.activeElement === first) {
       event.preventDefault();
       last.focus();
@@ -212,7 +329,7 @@ if (menu) {
     }
   });
   menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', (event) => {
-    if (!(event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)) menu.hidePopover();
+    if (!modifiedClick(event)) menu.hidePopover();
   }));
   mobileNav.addEventListener('change', ({ matches }) => {
     if (!matches && menu.matches(':popover-open')) menu.hidePopover();
@@ -548,10 +665,10 @@ if (!reduce && /^https?:$/.test(location.protocol) && history.pushState) {
       const mine = document.head.querySelector(sel), theirs = doc.head.querySelector(sel);
       if (mine && theirs) mine.setAttribute(attr, theirs.getAttribute(attr));
     }
-    const theirs = doc.querySelectorAll('.nav-links a, .menu-links a');
-    document.querySelectorAll('.nav-links a, .menu-links a').forEach((a, i) => {
-      const c = theirs[i]?.getAttribute('aria-current');
-      if (c) a.setAttribute('aria-current', c); else a.removeAttribute('aria-current');
+    const activePage = doc.querySelector('.nav-links a[aria-current="page"]')?.getAttribute('href');
+    document.querySelectorAll('.nav-links a, #menu nav a').forEach((a) => {
+      if (a.getAttribute('href') === activePage) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
     });
     document.querySelector('main').replaceWith(document.adoptNode(next));
     const u = new URL(url, location.href);
