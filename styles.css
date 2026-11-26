@@ -880,6 +880,42 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
   transition: border-color .2s, box-shadow .2s;
 }
 .field textarea { min-height: 140px; resize: vertical; }
+/* Enquiry dropdown: same chevron everywhere; browsers with customizable select
+   (Chrome 135+) also get a site-styled option list. Others keep their own list. */
+.field select {
+  appearance: none; cursor: pointer; padding-inline-end: 46px; font-weight: 600;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1930' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 16px center / 18px;
+}
+.field select:has(option[value=""]:checked) { color: var(--ink-3); font-weight: 500; }
+@supports (appearance: base-select) {
+  .field select, .field select::picker(select) { appearance: base-select; }
+  .field select { display: flex; align-items: center; background-image: none; }
+  .field select::picker-icon { content: ""; width: 18px; height: 18px; margin-inline-start: auto; background: currentColor; color: var(--ink);
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    transition: rotate .25s var(--ease-out); }
+  .field select { padding-inline-end: 16px; }
+  .field select:open::picker-icon { rotate: 180deg; }
+  .field select:open { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(44, 112, 208, .2); }
+  .field select::picker(select) {
+    margin-block: 8px; padding: 6px; border: 0; border-radius: var(--r-md);
+    background: var(--card); box-shadow: inset 0 0 0 1px var(--line), var(--shadow);
+    opacity: 0; translate: 0 -6px;
+    transition: opacity .2s, translate .25s var(--ease-out), overlay .25s allow-discrete, display .25s allow-discrete;
+  }
+  .field select:open::picker(select) { opacity: 1; translate: 0 0; }
+  @starting-style { .field select:open::picker(select) { opacity: 0; translate: 0 -6px; } }
+  .field select option {
+    padding: 12px 14px; border-radius: var(--r-sm); font-weight: 600; color: var(--ink); cursor: pointer;
+    transition: background-color .15s, color .15s;
+  }
+  .field select option[value=""] { display: none; }
+  .field select option:is(:hover, :focus-visible) { background: #e7eef9; color: #2656a1; outline: none; }
+  .field select option:checked { background: #f8ecc6; color: #775300; }
+  .field select option::checkmark { content: "\2713"; order: 1; margin-inline-start: auto; font-weight: 800; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .field select::picker(select), .field select::picker-icon { transition: none; }
+}
 .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 4px rgba(44, 112, 208, .2); }
 .field :user-invalid { border-color: var(--red-d); box-shadow: 0 0 0 4px rgba(196, 54, 58, .14); }
 .form-foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 6px; }
@@ -891,7 +927,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 .form-done h2 { font-size: var(--step-3); }
 .form-done p { color: var(--ink-2); max-width: 40ch; }
 .form-done .btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
-.map { margin-top: clamp(56px, 8vw, 96px); overflow: hidden; border-radius: clamp(60px, 12vw, 220px) clamp(60px, 12vw, 220px) 28px 28px; box-shadow: var(--shadow); background: var(--paper-2); }
+.map { margin-top: clamp(56px, 8vw, 96px); overflow: hidden; border-radius: var(--radius); box-shadow: var(--shadow); background: var(--paper-2); }
 .map iframe { display: block; width: 100%; height: clamp(320px, 42vw, 480px); border: 0; }
 .faq { display: grid; gap: 14px; max-width: 880px; margin-inline: auto; }
 .faq details { border-radius: var(--r-md); background: var(--card); box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .3s; }
@@ -1319,7 +1355,7 @@ html.js .cta-card.in .cta-rainbow path { stroke-dashoffset: 0; }
 @supports (corner-shape: squircle) {
   :root { --radius: 40px; } /* squircle reads tighter, so the shared card radius grows */
   *, *::before, *::after { corner-shape: squircle; }
-  .arch, .arch-frame::before, .arch-frame img, .map, .mark, .ten span,
+  .arch, .arch-frame::before, .arch-frame img, .mark, .ten span,
   .avatar, .socials a, .round-btn, .done-ic, .info-ic,
   .day-ruler li::before, .day-sun, .day-moon, .walk-dot { corner-shape: round; }
 }
